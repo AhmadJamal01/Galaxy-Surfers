@@ -17,6 +17,7 @@ class FullscreenTriangleState: public our::State {
     our::ShaderProgram program;
     //DONE: Add a variable in which we will store the name (ID) for a vertex array
     GLuint VAO;
+    //  A is an OpenGL Object that stores the state needed to supply vertex data 
 
     // onInitialize() function is called once before the state starts
     void onInitialize() override {
@@ -56,6 +57,9 @@ class FullscreenTriangleState: public our::State {
 
         //DONE: Create a vertex Array
         glGenVertexArrays(1, &VAO);
+        // Takes the number of vertex array object names to generate (n=1), pointer/array where it is valid to write n GLuints
+
+
         
 
         // We set the clear color to be black
@@ -69,8 +73,11 @@ class FullscreenTriangleState: public our::State {
 
 
         //DONE: Draw a triangle using the vertex array and the program
-        glBindVertexArray(VAO);                     // Better practice.
-        glDrawArrays(GL_TRIANGLES, 0, 3);           // 0 (offset), 3 how many vertices for each triangle.
+        glBindVertexArray(VAO);
+        // The first call allocates memory in the GPU for the VAO
+        // It also makes the VAO active.
+        // This makes the array the active array.
+        glDrawArrays(GL_TRIANGLES, 0, 3);           // (0) offset, (3) how many sequential vertices for each triangle.
 
     }
 

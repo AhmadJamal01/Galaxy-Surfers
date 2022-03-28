@@ -215,7 +215,7 @@ int our::Application::run(int run_for_frames)
 
 #if defined(ENABLE_OPENGL_DEBUG_MESSAGES)
     // if we have OpenGL debug messages enabled, set the message callback
-    // the below line should be commented for macs I guess?
+    // the below line should be commented for macs I guess? :(
     glDebugMessageCallback(opengl_callback, nullptr);
     // Then enable debug output
     glEnable(GL_DEBUG_OUTPUT);
