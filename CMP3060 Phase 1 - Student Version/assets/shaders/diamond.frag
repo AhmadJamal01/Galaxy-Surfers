@@ -13,7 +13,7 @@ void main(){
     //DONE: Write code that will draw the diamond
     float distance = abs(gl_FragCoord.x - center.x) + abs(gl_FragCoord.y - center.y);
 
-    if(distance <= side_length){
+    if(distance <= side_length/2.0){
         frag_color = inside_color;
     } else {
         frag_color = outside_color;

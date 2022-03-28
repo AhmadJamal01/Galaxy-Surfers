@@ -14,7 +14,7 @@ void main(){
     
     vec2 norm_distance = gl_FragCoord.xy - center;    
     
-    if(max((norm_distance[0]), (norm_distance[1])) <= side_length/2.0){
+    if(max(abs(norm_distance[0]), abs(norm_distance[1])) <= side_length/2.0){
         frag_color = inside_color;
     } else {
         frag_color = outside_color;
