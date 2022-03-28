@@ -185,7 +185,7 @@ int our::Application::run(int run_for_frames) {
 
 #if defined(ENABLE_OPENGL_DEBUG_MESSAGES)
     // if we have OpenGL debug messages enabled, set the message callback
-    glDebugMessageCallback(opengl_callback, nullptr);
+    // glDebugMessageCallback(opengl_callback, nullptr);
     // Then enable debug output
     glEnable(GL_DEBUG_OUTPUT);
     // Then make the output synchronized to the OpenGL commands.
