@@ -23,3 +23,5 @@ CMakeSettings.json
 
 # Screenshots
 screenshots/
+#imgcmp binary
+scripts/imgcmp
