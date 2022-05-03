@@ -32,10 +32,29 @@ our::Texture2D* our::texture_utils::loadImage(const std::string& filename, bool 
         return nullptr;
     }
     // Create a texture
-    our::Texture2D* texture = new our::Texture2D();
+    our::Texture2D* texture = new our::Texture2D();                     //* This will create the texture (generare ID)
     //Bind the texture such that we upload the image data to its storage
     //TODO: (Req 4) Finish this function to fill the texture with the data found in "pixels" and generate the mipmaps if requested
+    texture->bind();                                                    //* Now the texture is bound.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)pixels);
+    //@fun glTexImage2D: specify a two-dimensional texture image (Attach it to bound texture object on GPU)
+    //@param GL_TEXTURE_2D: The target texture
+    //@param 0: Mipmap base level of 0
+    //@param GL_RGBA8: internal format that will be used to store the image (check like 28, 29)
+    //@param size.x: width of the texture
+    //@param size.y: height of the texture
+    //@param 0: must be 0 for compatibility 
+    //@param GL_RGBA: format of source image
+    //@param GL_UNSIGNED_BYTE: Datatype of pixel data
+    //@param pixels: Pointer to the image(texture) data in memory.
+
+
+    if(generate_mipmap)     glGenerateMipmap(GL_TEXTURE_2D);
+    //@fun glGenerateMipMap: generate mipmaps for a specified texture objec
+    //@param GL_TEXTURE_2D: specifies the target to which the texture object is bound
+    //Mipmaps will be dynamically use for minification and magnification.
 
     stbi_image_free(pixels); //Free image data after uploading to GPU
+
     return texture;
 }

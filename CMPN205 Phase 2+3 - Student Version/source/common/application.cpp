@@ -183,6 +183,8 @@ int our::Application::run(int run_for_frames) {
     std::cout << "VERSION         : " << glGetString(GL_VERSION) << std::endl;
     std::cout << "GLSL VERSION    : " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 
+# define mac 0
+#if mac != 1
 #if defined(ENABLE_OPENGL_DEBUG_MESSAGES)
     // if we have OpenGL debug messages enabled, set the message callback
     glDebugMessageCallback(opengl_callback, nullptr);
@@ -192,6 +194,7 @@ int our::Application::run(int run_for_frames) {
     // This will make sure that OpenGL and the main thread are synchronized such that message callback is called as soon
     // as the command causing it is called. This is useful for debugging but slows down the code execution.
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#endif
 #endif
 
     setupCallbacks();
