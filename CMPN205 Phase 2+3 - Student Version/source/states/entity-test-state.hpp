@@ -17,13 +17,13 @@ T* find(our::World *world){
 }
 
 // This state tests and shows how to use the ECS framework and deserialization.
-class EntityTestState: public our::State {
+class EntityTestState: public our::State {      
 
     our::World world;
     
-    void onInitialize() override {
+    void onInitialize() override {                          
         // First of all, we get the scene configuration from the app config
-        auto& config = getApp()->getConfig()["scene"];
+        auto& config = getApp()->getConfig()["scene"];                     
         // If we have assets in the scene config, we deserialize them
         if(config.contains("assets")){
             our::deserializeAllAssets(config["assets"]);
@@ -36,29 +36,41 @@ class EntityTestState: public our::State {
         
     }
 
-    void onDraw(double deltaTime) override {
+    void onDraw(double deltaTime) override {     
+        // called every frame (drawing + logic)
+        // deltaTime is the time between frames to normalize the speed (e.g. meter/sec) between devices on different FPS
+        // will be used extensively in the game. (in the render loop)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         // First, we look for a camera and if none was found, we return (there is nothing we can render)
         our::CameraComponent* camera = find<our::CameraComponent>(&world);
-        if(camera == nullptr) return;
+        if(camera == nullptr) return;       // so we don't get a null pointer exception if camera is removed from config file (nonsense)
 
         // Then we compute the VP matrix from the camera
         glm::ivec2 size = getApp()->getFrameBufferSize();
-        //TODO: Change the following line to compute the correct view projection matrix 
-        glm::mat4 VP = camera->getProjectionMatrix(size) * camera->getViewMatrix();
+        //DONE: Change the following line to compute the correct view projection matrix [hmmm.]
+        glm::mat4 VP = camera->getProjectionMatrix(size) * camera->getViewMatrix();     // will be multiplied by the object's model matrix
 
         for(auto& entity : world.getEntities()){
-            // For each entity, we look for a mesh renderer (if none was found, we skip this entity)
+            //!For each entity, we look for a mesh renderer (if none was found, we skip this entity)
+
             our::MeshRendererComponent* meshRenderer = entity->getComponent<our::MeshRendererComponent>();
             if(meshRenderer == nullptr) continue;
-            //TODO: Complete the loop body to draw the current entity
+            //* will be used later below to draw the object.
+            // mesh defines the vertices and material defines the shapes drawn by vertices (objects).
+            // it takes mesh and material to draw something
+            // besides a transformation matrix to apply transformations on it (dynamics)
+            //DONE: Complete the loop body to draw the current entity [hmmm.]
             // Then we setup the material, send the transform matrix to the shader then draw the mesh
             our::Material* material = meshRenderer->material;
             material->setup();
             material->shader->set("transform", VP * entity->getLocalToWorldMatrix());
+            //* Multiplying the model matrix of the specific entity VP to go to the canonical view volume.
+            
             meshRenderer->mesh->draw();
         }
     }
+
 
     void onDestroy() override {
         world.clear();
