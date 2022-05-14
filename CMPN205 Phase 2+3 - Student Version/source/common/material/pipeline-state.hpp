@@ -51,7 +51,7 @@ namespace our
             // checks the bool enabled defined in the struct faceCulling
             if (faceCulling.enabled)
             {
-                // if enabled, we have to enable OpenGL's GL_CULL_FACE option
+                // if faceCulling.enabled, we have to enable OpenGL's GL_CULL_FACE option
                 glEnable(GL_CULL_FACE);
 
                 // next we choose which face to render while discarding the other
@@ -63,8 +63,11 @@ namespace our
 
             if (depthTesting.enabled)
             {
+                // configure openGL to use depth testing
                 glEnable(GL_DEPTH_TEST);
 
+                // configures the function used to compare and select the depth to be used
+                // for example in the tutorial we would select the less value to be set in the depth buffer
                 glDepthFunc(depthTesting.function);
             }
 
@@ -82,16 +85,11 @@ namespace our
                              blending.constantColor[3]);
             }
 
+            // make sure new values for all color channels are written to the color buffer
             glColorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
-
-            if (depthMask)
-            {
-                glDepthMask(GL_TRUE);
-            }
-            else
-            {
-                glDepthMask(GL_FALSE);
-            }
+            // make sure that new values are written to the depth buffer after the depth function
+            // if set to false, no new values will be written to the depth/color buffer
+            glDepthMask(depthMask);
         }
 
         // Given a json object, this function deserializes a PipelineState structure
