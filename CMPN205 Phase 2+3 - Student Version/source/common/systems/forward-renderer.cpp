@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include "forward-renderer.hpp"
 #include "../mesh/mesh-utils.hpp"
 #include "../texture/texture-utils.hpp"
@@ -257,5 +258,4 @@ namespace our
             glDrawArrays(GL_TRIANGLES, 0, 3);
         }
     }
-
 }

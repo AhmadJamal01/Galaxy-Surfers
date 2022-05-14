@@ -81,12 +81,17 @@ namespace our
 
             if (blending.enabled)
             {
+                // first enable GL_BLEND
                 glEnable(GL_BLEND);
 
+                // set the blending equation but the usual is GL_FUNC_ADD
                 glBlendEquation(blending.equation);
 
+                // The glBlendFunc(GLenum sfactor, GLenum dfactor) function expects two parameters
+                // that set the option for the source and destination factor
                 glBlendFunc(blending.sourceFactor, blending.destinationFactor);
 
+                // the constant color vector Cconstant can be separately set via the glBlendColor function
                 glBlendColor(blending.constantColor[0],
                              blending.constantColor[1],
                              blending.constantColor[2],
