@@ -27,6 +27,12 @@ namespace our
             //  We will draw the sphere from the inside, so what options should we pick for the face culling.
             PipelineState skyPipelineState{};
 
+            skyPipelineState.depthTesting.enabled=true;
+            skyPipelineState.depthTesting.function = GL_LEQUAL;
+
+            skyPipelineState.faceCulling.enabled=false;
+            skyPipelineState.faceCulling.culledFace=GL_FRONT;
+
             // Load the sky texture (note that we don't need mipmaps since we want to avoid any unnecessary blurring while rendering the sky)
             std::string skyTextureFile = config.value<std::string>("sky", "");
             Texture2D *skyTexture = texture_utils::loadImage(skyTextureFile, false);
@@ -196,23 +202,27 @@ namespace our
         if (this->skyMaterial)
         {
             // TODO: (Req 9) setup the sky material
-
+            this->skyMaterial->setup();
             // TODO: (Req 9) Get the camera position
-
+            glm::vec3 cameraPosition=owner->getLocalToWorldMatrix()*glm::vec4(0,0,0,1);
             // TODO: (Req 9) Create a model matrix for the sy such that it always follows the camera (sky sphere center = camera position)
+            glm::mat4 identity(1.0f);
+            glm::mat4 M= glm::translate(identity,cameraPosition);
 
             // TODO: (Req 9) We want the sky to be drawn behind everything (in NDC space, z=1)
             //  We can acheive the is by multiplying by an extra matrix after the projection but what values should we put in it?
             glm::mat4 alwaysBehindTransform = glm::mat4(
-                //  Row1, Row2, Row3, Row4
+            //  Row1, Row2, Row3, Row4
                 1.0f, 0.0f, 0.0f, 0.0f, // Column1
                 0.0f, 1.0f, 0.0f, 0.0f, // Column2
-                0.0f, 0.0f, 1.0f, 0.0f, // Column3
-                0.0f, 0.0f, 0.0f, 1.0f  // Column4
+                0.0f, 0.0f, 0.0f, 0.0f, // Column3
+                0.0f, 0.0f, 1.0f, 1.0f  // Column4
             );
             // TODO: (Req 9) set the "transform" uniform
-
+            glm::mat4 skyTransform = alwaysBehindTransform * VP * M ;
+            skyMaterial->shader->set("transform", skyTransform);
             // TODO: (Req 9) draw the sky sphere
+            skySphere->draw();
         }
         // TODO: (Req 8) Draw all the transparent commands
         //  Don't forget to set the "transform" uniform to be equal the model-view-projection matrix for each render command
