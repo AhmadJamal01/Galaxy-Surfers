@@ -26,8 +26,6 @@ namespace our {
         // This method binds this sampler to the given texture unit
         void bind(GLuint textureUnit) const {
             //Done: (Req 5) Complete this function
-            //!check if texture unit is of GL_TEXTURE0 or normal int (sampler takes normal int)
-            //!the other option textureUnit =  textureUnit - GL_TEXTURE0;
             glBindSampler(textureUnit, name);
         }
 

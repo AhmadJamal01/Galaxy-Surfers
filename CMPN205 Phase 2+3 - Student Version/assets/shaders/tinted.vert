@@ -11,6 +11,8 @@ uniform mat4 transform;
 
 void main(){
     //DONE: (Req 6) Change the next line to apply the transformation matrix
+    //* Comment: apply the transformation matrix to the position by the matrix multiplication
+    //*(the position has to be in homogeneous coordinates for translation to work)
     gl_Position = transform * vec4(position, 1.0);
     vs_out.color = color;
 }
