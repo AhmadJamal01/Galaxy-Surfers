@@ -60,6 +60,10 @@ namespace our
                 // we also need to specify which ordering of vertices define the front face
                 glFrontFace(faceCulling.frontFace);
             }
+            else
+            {
+                glDisable(GL_CULL_FACE);
+            }
 
             if (depthTesting.enabled)
             {
@@ -69,6 +73,10 @@ namespace our
                 // configures the function used to compare and select the depth to be used
                 // for example in the tutorial we would select the less value to be set in the depth buffer
                 glDepthFunc(depthTesting.function);
+            }
+            else
+            {
+                glDisable(GL_DEPTH_TEST);
             }
 
             if (blending.enabled)
@@ -83,6 +91,10 @@ namespace our
                              blending.constantColor[1],
                              blending.constantColor[2],
                              blending.constantColor[3]);
+            }
+            else
+            {
+                glDisable(GL_BLEND);
             }
 
             // make sure new values for all color channels are written to the color buffer
