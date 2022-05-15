@@ -27,11 +27,11 @@ namespace our
             //  We will draw the sphere from the inside, so what options should we pick for the face culling.
             PipelineState skyPipelineState{};
 
-            skyPipelineState.depthTesting.enabled = true;
-            skyPipelineState.depthTesting.function = GL_LEQUAL;
+            skyPipelineState.depthTesting.enabled = true;          //set depthTesting Enabled as sky would be drawn after opaque
+            skyPipelineState.depthTesting.function = GL_LEQUAL;   // LEQUAL because object would be drawn from near to far
 
-            skyPipelineState.faceCulling.enabled = true;
-            skyPipelineState.faceCulling.culledFace = GL_FRONT;
+            skyPipelineState.faceCulling.enabled = true;          // set faceCulling Enabled so we can draw the sphere from inside
+            skyPipelineState.faceCulling.culledFace = GL_FRONT;  // culling the Front of sphere
 
             // Load the sky texture (note that we don't need mipmaps since we want to avoid any unnecessary blurring while rendering the sky)
             std::string skyTextureFile = config.value<std::string>("sky", "");
@@ -241,9 +241,9 @@ namespace our
             // TODO: (Req 9) Get the camera position
             glm::vec3 cameraPosition = owner->getLocalToWorldMatrix() * glm::vec4(0, 0, 0, 1.0);
 
-            // TODO: (Req 9) Create a model matrix for the sy such that it always follows the camera (sky sphere center = camera position)
+            // TODO: (Req 9) Create a model matrix for the sky such that it always follows the camera (sky sphere center = camera position)
             glm::mat4 identity(1.0f);
-            glm::mat4 M = glm::translate(identity, cameraPosition);
+            glm::mat4 M = glm::translate(identity, cameraPosition);  // translating shpere position to camera position
 
             // TODO: (Req 9) We want the sky to be drawn behind everything (in NDC space, z=1)
             //  We can acheive the is by multiplying by an extra matrix after the projection but what values should we put in it?
@@ -251,11 +251,11 @@ namespace our
                 //  Row1, Row2, Row3, Row4
                 1.0f, 0.0f, 0.0f, 0.0f, // Column1
                 0.0f, 1.0f, 0.0f, 0.0f, // Column2
-                0.0f, 0.0f, 0.0f, 0.0f, // Column3
-                0.0f, 0.0f, 1.0f, 1.0f  // Column4
+                0.0f, 0.0f, 0.0f, 0.0f, // Column3       // set z=0
+                0.0f, 0.0f, 1.0f, 1.0f  // Column4      // set z=1
             );
             // TODO: (Req 9) set the "transform" uniform
-            glm::mat4 skyTransform = alwaysBehindTransform * VP * M;
+            glm::mat4 skyTransform = alwaysBehindTransform * VP * M;   //trasforming sky to depth = 1 
             skyMaterial->shader->set("transform", skyTransform);
             // TODO: (Req 9) draw the sky sphere
             skySphere->draw();
