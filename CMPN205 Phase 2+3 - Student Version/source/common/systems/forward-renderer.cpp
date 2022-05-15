@@ -60,6 +60,7 @@ namespace our
         {
             // done TODO: (Req 10) Create a framebuffer
             glGenFramebuffers(1, &postprocessFrameBuffer);
+            // bind the frame buffer so it becomes the target buffer for rendering operations
             glBindFramebuffer(GL_FRAMEBUFFER, postprocessFrameBuffer);
 
             // done TODO: (Req 10) Create a color and a depth texture and attach them to the framebuffer
@@ -70,10 +71,13 @@ namespace our
             // depth texture
             depthTarget = texture_utils::empty(GL_DEPTH_COMPONENT24, windowSize);
 
+            // attach color texture as a color_attachment as a logical buffer of the framebuffer
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTarget->getOpenGLName(), 0);
+            // attach color texture as a depth_attachment as a logical buffer of the framebuffer
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTarget->getOpenGLName(), 0);
 
             // done TODO: (Req 10) Unbind the framebuffer just to be safe
+            // unbinding is done by calling glBindFramebuffer with 0 as the target buffer
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             // Create a vertex array to use for drawing the texture
             glGenVertexArrays(1, &postProcessVertexArray);
@@ -210,6 +214,7 @@ namespace our
         if (postprocessMaterial)
         {
             // done TODO: (Req 10) bind the framebuffer
+            // bind the framebuffer to be the target buffer for rendering operations
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postprocessFrameBuffer);
         }
 
@@ -268,6 +273,7 @@ namespace our
         if (postprocessMaterial)
         {
             // done TODO: (Req 10) Return to the default framebuffer
+            // by calling glBindFramebuffer with 0 as the target buffer
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
             // done TODO: (Req 10) Setup the postprocess material and draw the fullscreen triangle
             postprocessMaterial->setup();
