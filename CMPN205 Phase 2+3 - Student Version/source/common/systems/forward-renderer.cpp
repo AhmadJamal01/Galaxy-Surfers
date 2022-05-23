@@ -1,7 +1,7 @@
 #include "forward-renderer.hpp"
 #include "../mesh/mesh-utils.hpp"
 #include "../texture/texture-utils.hpp"
-
+#include <iostream>
 namespace our
 {
 
@@ -136,6 +136,7 @@ namespace our
         // First of all, we search for a camera and for all the mesh renderers
         CameraComponent *camera = nullptr;
         opaqueCommands.clear();
+        lightSupportCommands.clear();
         transparentCommands.clear();
         for (auto entity : world->getEntities())
         {
@@ -152,9 +153,13 @@ namespace our
                 command.mesh = meshRenderer->mesh;
                 command.material = meshRenderer->material;
                 // if it is transparent, we add it to the transparent commands list
+                
                 if (command.material->transparent)
                 {
                     transparentCommands.push_back(command);
+                }
+                else if (command.material->affectedByLight){
+                    lightSupportCommands.push_back(command);
                 }
                 else
                 {
@@ -233,6 +238,35 @@ namespace our
             command.material->shader->set("transform", transform);
             command.mesh->draw();
         }
+        //!ADDED FOR LIGHT
+        //--------------------
+        for (auto &command : lightSupportCommands)
+        {
+            command.material->setup();
+            glm::mat4 M = command.localToWorld;
+            glm::mat4 M_IT = glm::inverse(glm::transpose(M));
+            glm::vec3 eye = camera->getOwner()->localTransform.position;
+            glm::vec3 sky_top= glm::vec3(0.3f, 0.6f, 1.0f);
+            glm::vec3 sky_middle= glm::vec3(0.3f, 0.3f, 0.3f);
+            glm::vec3 sky_bottom = glm::vec3( 0.1f, 0.1f, 0.0f);
+            command.material->shader->set("M", M);
+            command.material->shader->set("VP", VP);
+            command.material->shader->set("M_IT", M_IT);
+            command.material->shader->set("eye", eye);
+            command.material->shader->set("sky.top", sky_top);
+            command.material->shader->set("sky.middle", sky_middle);
+            command.material->shader->set("sky.bottom", sky_bottom);
+            //light
+            command.material->shader->set("lights[0].type", 1);
+            command.material->shader->set("lights[0].position", eye);
+            command.material->shader->set("lights[0].diffuse", glm::vec3(1, 0.2, 0.1));
+            command.material->shader->set("lights[0].specular", glm::vec3(1, 0.2, 0.1));
+            command.material->shader->set("lights[0].attenuation",glm::vec3( 1, 0, 0));
+            command.material->shader->set("light_count", 1);
+
+            command.mesh->draw();
+        }
+        //--------------------
         // If there is a sky material, draw the sky
         if (this->skyMaterial)
         {

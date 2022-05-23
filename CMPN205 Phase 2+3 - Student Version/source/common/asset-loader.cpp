@@ -8,7 +8,7 @@
 #include "mesh/mesh-utils.hpp"
 #include "material/material.hpp"
 #include "deserialize-utils.hpp"
-
+#include <iostream>
 namespace our {
 
     // This will load all the shaders defined in "data"

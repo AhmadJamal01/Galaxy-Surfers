@@ -21,7 +21,7 @@ namespace our {
         PipelineState pipelineState;
         ShaderProgram* shader;
         bool transparent;
-        
+        bool affectedByLight;
         // This function does 2 things: setup the pipeline state and set the shader program to be used
         virtual void setup() const;
         // This function read a material from a json object
@@ -52,14 +52,30 @@ namespace our {
         void setup() const override;
         void deserialize(const nlohmann::json& data) override;
     };
-
+    //!ADDED FOR LIGHT
+    //----------------------
+    class LightMaterial : public Material {
+    public:
+        Texture2D* albedo ;
+        Texture2D* specular ;
+        Texture2D* ambient_occlusion ;
+        Texture2D* roughness ;
+        Texture2D* emissive ;
+        Sampler* sampler ;
+        void setup() const override;
+        void deserialize(const nlohmann::json& data) override;
+    };
+    //-----------------------
     // This function returns a new material instance based on the given type
     inline Material* createMaterialFromType(const std::string& type){
         if(type == "tinted"){
             return new TintedMaterial();
         } else if(type == "textured"){
             return new TexturedMaterial();
-        } else {
+        } else if(type == "LightMaterial"){
+            return new LightMaterial();
+        }
+        else {
             return new Material();
         }
     }
