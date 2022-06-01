@@ -30,11 +30,10 @@ namespace our {
         // - up is the direction (0,1,0)
         //!but to use glm::lookAt, we need eye, center and up in the world space.
         // Since M (see above) transforms from the camera to the world space, you can use M to compute:
-        // - the eye position which is the point (0,0,0) but after being transformed by M
-        // - the center position which is the point (0,0,-1) but after being transformed by M
+        // - the [eye position] which is the point (0,0,0) but after being transformed by M
+        // - the [center position] which is the point (0,0,-1) but after being transformed by M
         // - the up direction which is the vector (0,1,0) but after being transformed by M
         // then you can use glm::lookAt
-
         auto owner = getOwner();
         auto M = owner->getLocalToWorldMatrix();
         vec4 camera_eye = vec4(0, 0, 0, 1);

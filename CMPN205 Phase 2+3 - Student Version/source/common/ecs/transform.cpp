@@ -11,7 +11,7 @@ namespace our
     // HINT: to convert euler angles to a rotation matrix, you can use glm::yawPitchRoll
     glm::mat4 Transform::toMat4() const
     {
-        // done: todo: (Req 2) Write this function
+        // DONE: todo: (Req 2) Write this function
         // build 4x4 translation matrix from the position vector where the translation amount
         // is determined by the position vector components value
         glm::mat4 translation_matrix = glm::translate(glm::mat4(1.0f), position);
@@ -33,6 +33,8 @@ namespace our
         position = data.value("position", position);
         rotation = glm::radians(data.value("rotation", glm::degrees(rotation)));
         scale = data.value("scale", scale);
+
+        // position, rotation and scale with respect to parent entity.
     }
 
 }

@@ -183,7 +183,7 @@ int our::Application::run(int run_for_frames) {
     std::cout << "VERSION         : " << glGetString(GL_VERSION) << std::endl;
     std::cout << "GLSL VERSION    : " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 
-# define mac 0
+# define mac 1
 #if mac != 1
 #if defined(ENABLE_OPENGL_DEBUG_MESSAGES)
     // if we have OpenGL debug messages enabled, set the message callback
@@ -233,6 +233,7 @@ int our::Application::run(int run_for_frames) {
         currentState = nextState;
         nextState = nullptr;
     }
+
     // Call onInitialize if the scene needs to do some custom initialization (such as file loading, object creation, etc).
     if(currentState) currentState->onInitialize();
 

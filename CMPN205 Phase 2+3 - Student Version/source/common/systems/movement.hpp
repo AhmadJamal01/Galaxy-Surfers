@@ -16,7 +16,6 @@ namespace our
     // For more information, see "common/components/movement.hpp"
     class MovementSystem {
     public:
-
         // This should be called every frame to update all entities containing a MovementComponent. 
         void update(World* world, float deltaTime) {
             // For each entity in the world
@@ -31,7 +30,6 @@ namespace our
                 }
             }
         }
-
     };
 
 }

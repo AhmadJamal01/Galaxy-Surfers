@@ -28,6 +28,7 @@ namespace our {
     }
 
     // Deserializes the entity data and components from a json object
+    // Called for each entity in the jsonc file
     void Entity::deserialize(const nlohmann::json& data){
         if(!data.is_object()) return;
         name = data.value("name", name);

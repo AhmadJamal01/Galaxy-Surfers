@@ -30,13 +30,15 @@
                 "grass": "assets/textures/grass_ground_d.jpg",
                 "wood": "assets/textures/wood.jpg",
                 "glass": "assets/textures/glass-panels.png",
-                "monkey": "assets/textures/monkey.png"
+                "monkey": "assets/textures/monkey.png",
+                "Ninja": "assets/textures/avatar_ninja.png"
             },
             "meshes":{
                 "cube": "assets/models/cube.obj",
                 "monkey": "assets/models/monkey.obj",
                 "plane": "assets/models/plane.obj",
-                "sphere": "assets/models/sphere.obj"
+                "sphere": "assets/models/sphere.obj",
+                "Ninja": "assets/models/Ninja.obj"
             },
             "samplers":{
                 "default":{},
@@ -128,31 +130,36 @@
             }
         },
         "world":[
-            {
-                "position": [0, 0, 10],
+            // REMOVED THE SEPRATE CAMERA ENTITY AND MADE IT A CHILD OF THE NINJA.
+
+            {// Added an entity for the ninja in the scene with a mesh renderer component.
+                "rotation": [0, 0, 0],
+                "scale": [5, 5, 5],
+                "position": [0, 0, 0],
                 "components": [
                     {
-                        "type": "Camera"
+                        "type": "Mesh Renderer",
+                        "mesh": "Ninja",
+                        "material": "monkey"
                     },
                     {
-                        "type": "Free Camera Controller"
+                        "type": "Ninja Camera Controller"       // It holds speed info about our ninja.
                     }
                 ],
                 "children": [
                     {
-                        "position": [1, -1, -1],
-                        "rotation": [45, 45, 0],
-                        "scale": [0.1, 0.1, 1.0],
-                        "components": [
-                            {
-                                "type": "Mesh Renderer",
-                                "mesh": "cube",
-                                "material": "metal"
-                            }
+                        "position": [0, 0.18, -0.35],  // setting offset to the ninja (Decied with ImGUI)
+                        "rotation": [-20, 180, 0.0 ],
+
+                        // It's a child entity of the ninja with only the camera component.
+                        "components" : [
+                            {"type": "Camera"}
                         ]
                     }
                 ]
+
             },
+
             {
                 "rotation": [-45, 0, 0],
                 "components": [

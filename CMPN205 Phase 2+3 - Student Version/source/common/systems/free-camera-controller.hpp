@@ -18,8 +18,8 @@ namespace our
     // This system is added as a slightly complex example for how use the ECS framework to implement logic. 
     // For more information, see "common/components/free-camera-controller.hpp"
     class FreeCameraControllerSystem {
-        Application* app; // The application in which the state runs
-        bool mouse_locked = false; // Is the mouse locked
+        Application* app;               // The application in which the state runs (app holds general data, controlling events)
+        bool mouse_locked = false;      // Is the mouse locked (e.g. unlock it in main menu only)
 
     public:
         // When a state enters, it should call this function and give it the pointer to the application
@@ -27,7 +27,7 @@ namespace our
             this->app = app;
         }
 
-        // This should be called every frame to update all entities containing a FreeCameraControllerComponent 
+        // This should be called every frame to update all entities containing a FreeCameraControllerComponent
         void update(World* world, float deltaTime) {
             // First of all, we search for an entity containing both a CameraComponent and a FreeCameraControllerComponent
             // As soon as we find one, we break

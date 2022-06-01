@@ -8,9 +8,9 @@ namespace our {
     void World::deserialize(const nlohmann::json& data, Entity* parent){
         if(!data.is_array()) return;
         for(const auto& entityData : data){
-            Entity* entity = add();
+            Entity* entity = add();             // creatr an empty entity.
             entity->parent = parent;
-            entity->deserialize(entityData);
+            entity->deserialize(entityData);    // read the data of the entity.
             if(entityData.contains("children"))
                 this->deserialize(entityData["children"], entity);
         }

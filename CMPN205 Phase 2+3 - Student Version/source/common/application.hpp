@@ -91,13 +91,13 @@ namespace our {
                 delete it->second;
             }
             State* scene = new T();
-            scene->application = this;
+            scene->application = this;              // will use application to access keyboard and mouse
             states[name] = scene;
         }
 
         // Tells the application to change its current state
         // The change will not be applied until the current frame ends
-        void changeState(std::string name){
+        void changeState(std::string name){                                 // to change the state
             auto it = states.find(name);
             if(it != states.end()){
                 nextState = it->second;

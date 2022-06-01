@@ -83,6 +83,8 @@ set(COMMON_SOURCES
         source/common/systems/forward-renderer.cpp
         source/common/systems/free-camera-controller.hpp
         source/common/systems/movement.hpp
+
+        source/common/components/ninja-controller-component.cpp
 )
 
 # Define the directories in which to search for the included headers
