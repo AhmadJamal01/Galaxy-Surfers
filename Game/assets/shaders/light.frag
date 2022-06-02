@@ -75,7 +75,7 @@ void main(){
         
         vec3 diffuse = light.diffuse * material_diffuse * max(0, dot(normal, direction_to_light));
         
-        vec3 reflected = reflect(-direction_to_light, normal);
+        vec3 reflected = normalize(reflect(-direction_to_light, normal));
         
         vec3 specular = light.specular * material_specular * pow(max(0, dot(view, reflected)), material_shininess);
 
