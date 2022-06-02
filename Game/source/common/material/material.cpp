@@ -23,7 +23,12 @@ namespace our {
         }
         shader = AssetLoader<ShaderProgram>::get(data["shader"].get<std::string>());
         transparent = data.value("transparent", false);
-        affectedByLight = data.value("affectedByLight", false);
+        std::string type =data["type"].get<std::string>();
+        if (type == "LightMaterial"){
+            affectedByLight = true;
+        }else{
+            affectedByLight = false;
+        }
     }
 
     // This function should call the setup of its parent and
@@ -106,12 +111,12 @@ namespace our {
     void LightMaterial::deserialize(const nlohmann::json& data){
         Material::deserialize(data);
         if(!data.is_object()) return;
-        albedo = AssetLoader<Texture2D>::get(data.value("albedo", ""));
-        ambient_occlusion = AssetLoader<Texture2D>::get(data.value("ambient_occlusion", ""));
-        roughness = AssetLoader<Texture2D>::get(data.value("roughness", ""));
-        emissive = AssetLoader<Texture2D>::get(data.value("emissive", ""));
-        specular = AssetLoader<Texture2D>::get(data.value("specular", ""));
-        sampler = AssetLoader<Sampler>::get(data.value("sampler", ""));
+        albedo = AssetLoader<Texture2D>::get(data.value("albedo", "black"));
+        ambient_occlusion = AssetLoader<Texture2D>::get(data.value("ambient_occlusion", "black"));
+        roughness = AssetLoader<Texture2D>::get(data.value("roughness", "black"));
+        emissive = AssetLoader<Texture2D>::get(data.value("emissive", "black"));
+        specular = AssetLoader<Texture2D>::get(data.value("specular", "black"));
+        sampler = AssetLoader<Sampler>::get(data.value("sampler", "default"));
         
         std::cout <<  std::endl << albedo << std::endl;
         std::cout <<  std::endl << ambient_occlusion << std::endl;

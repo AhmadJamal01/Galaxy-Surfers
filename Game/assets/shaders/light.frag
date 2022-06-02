@@ -85,7 +85,7 @@ void main(){
             attenuation /= dot(light.attenuation, vec3(d*d, d, 1));
             if(light.type == SPOT){
                 float angle = acos(dot(-direction_to_light, light.direction));
-                attenuation *= smoothstep(light.cone_angles.y, light.cone_angles.x, angle);
+                attenuation *= 1/(smoothstep(light.cone_angles.x, light.cone_angles.y, angle)+1);
             }
         }
 

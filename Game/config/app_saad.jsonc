@@ -11,7 +11,7 @@
     },
     "scene": {
         "renderer":{
-            "sky": "assets/textures/sky.jpg",
+            
             "postprocess": "assets/shaders/postprocess/vignette.frag"
         },
         "assets":{
@@ -39,7 +39,8 @@
                 "rocky_monkey_ambient_occlusion": "assets/textures/rocky_monkey_ambient_occlusion.jpg",
                 "rocky_monkey_emissive": "assets/textures/rocky_monkey_emissive.jpg",
                 "rocky_monkey_roughness": "assets/textures/rocky_monkey_roughness.jpg",
-                "rocky_monkey_specular": "assets/textures/rocky_monkey_specular.jpg"
+                "rocky_monkey_specular": "assets/textures/rocky_monkey_specular.jpg",
+                "black": "assets/textures/black.jpg"
             },
             "meshes":{
                 "cube": "assets/models/cube.obj",
@@ -62,13 +63,21 @@
                             "enabled": true
                         }
                     },
-                    "affectedByLight": true,
                     "albedo": "rocky_monkey_albedo",
                     "ambient_occlusion": "rocky_monkey_ambient_occlusion",
                     "emissive": "rocky_monkey_emissive",
                     "roughness": "rocky_monkey_roughness",
-                    "specular": "rocky_monkey_specular",
-                    "sampler": "default"
+                    "specular": "rocky_monkey_specular"
+                },
+                "shiny_moon":{
+                    "type": "LightMaterial",
+                    "shader": "light",
+                    "pipelineState": {
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "emissive": "moon"
                 },
                 "metal":{
                     "type": "tinted",
@@ -119,6 +128,17 @@
                     "tint": [1, 1, 1, 1],
                     "texture": "grass",
                     "sampler": "default"
+                },
+                "light_grass":{
+                    "type": "LightMaterial",
+                    "shader": "light",
+                    "pipelineState": {
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    
+                    "albedo": "grass"
                 },
                 "monkey":{
                     "type": "textured",
@@ -177,16 +197,16 @@
                         ]
                     },
                     {
-                        "position": [0, 0, 0],
-                        "rotation": [0, 0, 0],
+                        "position": [0, 0, -1],
+                        "rotation": [0, 0, -90],
                         "components": [
                             {
                                 "type": "Light",
-                                "kind": 1,
-                                "diffuse":[1, 0.9, 0.7],
-                                "specular":[1, 0.9, 0.7],
-                                "cone_angles":[28, 28],
-                                "attenuation":[1, 0, 0]
+                                "kind": 0,
+                                "diffuse":[1, 1, 1],
+                                "specular":[1, 1, 1],
+                                "cone_angles":[20, 30],
+                                "attenuation":[0, 0, 0.5]
                             }
                         ]
                     }
@@ -202,8 +222,8 @@
                     },
                     {
                         "type": "Movement",
-                        "linearVelocity": [0, 0, 0],
-                        "angularVelocity": [0, 0, 0]
+                        "linearVelocity": [0, 0.1, 0],
+                        "angularVelocity": [0, 45, 0]
                     }
                 ]
             },
@@ -215,7 +235,7 @@
                     {
                         "type": "Mesh Renderer",
                         "mesh": "plane",
-                        "material": "grass"
+                        "material": "light_grass"
                     }
                 ]
             },
@@ -227,11 +247,26 @@
                     {
                         "type": "Mesh Renderer",
                         "mesh": "sphere",
-                        "material": "moon"
+                        "material": "shiny_moon"
                     },
                     {
                         "type": "Movement",
                         "angularVelocity": [0, 90, 0]
+                    }
+                ],
+                "children": [
+                    {
+                        "position": [0, 0, 0],
+                        "rotation": [0, 0, 0],
+                        "components": [
+                            {
+                                "type": "Light",
+                                "kind": 1,
+                                "diffuse":[1, 1, 1],
+                                "specular":[1, 1, 1],
+                                "attenuation":[0.01, 0,0]
+                            }
+                        ]
                     }
                 ]
             }

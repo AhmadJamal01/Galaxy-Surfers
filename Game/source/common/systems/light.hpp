@@ -19,8 +19,8 @@ namespace our
 				LightComponent* light = entity->getComponent<LightComponent>();
 				if(light){
                     world->lights[world->light_count].kind = light->kind;
-                    world->lights[world->light_count].position = entity->getLocalToWorldMatrix() * glm::vec4(entity->localTransform.position, 1);
-                    world->lights[world->light_count].direction = entity->localTransform.rotation;
+                    world->lights[world->light_count].position = glm::vec3(entity->getLocalToWorldMatrix() * glm::vec4(entity->localTransform.position, 1));
+                    world->lights[world->light_count].direction = glm::vec3(glm::transpose(glm::inverse(entity->getLocalToWorldMatrix())) * glm::vec4(entity->localTransform.rotation,0));
                     world->lights[world->light_count].diffuse = light->diffuse;
                     world->lights[world->light_count].specular = light->specular;
                     world->lights[world->light_count].attenuation = light->attenuation;

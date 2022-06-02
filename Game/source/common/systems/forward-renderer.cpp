@@ -246,7 +246,7 @@ namespace our
         {
             command.material->setup();
             glm::mat4 M = command.localToWorld;
-            glm::mat4 M_IT = glm::inverse(glm::transpose(M));
+            glm::mat4 M_IT = glm::transpose(glm::inverse(M));
             glm::vec3 eye = camera->getOwner()->localTransform.position;
             glm::vec3 sky_top= glm::vec3(0.3f, 0.6f, 1.0f);
             glm::vec3 sky_middle= glm::vec3(0.3f, 0.3f, 0.3f);
