@@ -31,14 +31,14 @@
                 "wood": "assets/textures/wood.jpg",
                 "glass": "assets/textures/glass-panels.png",
                 "monkey": "assets/textures/monkey.png",
-                "Ninja": "assets/textures/avatar_ninja.png"
+                "ninja": "assets/textures/avatar_ninja.png"
             },
             "meshes":{
                 "cube": "assets/models/cube.obj",
                 "monkey": "assets/models/monkey.obj",
                 "plane": "assets/models/plane.obj",
                 "sphere": "assets/models/sphere.obj",
-                "Ninja": "assets/models/Ninja.obj"
+                "ninja": "assets/models/Ninja.obj"
             },
             "samplers":{
                 "default":{},
@@ -126,7 +126,23 @@
                     "tint": [1, 1, 1, 1],
                     "texture": "moon",
                     "sampler": "default"
+                },
+                "ninja":{
+                    "type": "textured",
+                    "shader": "textured",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "texture": "ninja",
+                    "sampler": "default"
                 }
+
             }
         },
         "world":[
@@ -135,15 +151,17 @@
             {// Added an entity for the ninja in the scene with a mesh renderer component.
                 "rotation": [0, 0, 0],
                 "scale": [5, 5, 5],
-                "position": [0, 0, 0],
+                "position": [0, 0, -4],
                 "components": [
                     {
                         "type": "Mesh Renderer",
-                        "mesh": "Ninja",
-                        "material": "monkey"
+                        "mesh": "ninja",
+                        "material": "ninja"
                     },
                     {
-                        "type": "Ninja Camera Controller"       // It holds speed info about our ninja.
+                        "type": "Ninja Camera Controller",       // It holds speed info about our ninja.
+                        "positionSensitivity": [35.0, 35.0, 35.0]
+
                     }
                 ],
                 "children": [

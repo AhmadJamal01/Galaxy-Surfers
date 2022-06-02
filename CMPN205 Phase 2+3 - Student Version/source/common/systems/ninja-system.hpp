@@ -65,16 +65,17 @@ namespace our
             
             // We change the camera position based on the keys WASD/QE
             // Q & E moves the player up and down
-            if(app->getKeyboard().isPressed(GLFW_KEY_Q)) position += up * (deltaTime * speed.y);
-            if(app->getKeyboard().isPressed(GLFW_KEY_E)) position -= up * (deltaTime * speed.y);
+            //if(app->getKeyboard().isPressed(GLFW_KEY_Q)) position += up * (deltaTime * speed.y);
+            //if(app->getKeyboard().isPressed(GLFW_KEY_E)) position -= up * (deltaTime * speed.y);
 
             // S & W moves the player back and forth
+            //! These will be disabled.
             if(app->getKeyboard().isPressed(GLFW_KEY_W)) position -= front * (deltaTime * speed.z);
             if(app->getKeyboard().isPressed(GLFW_KEY_S)) position += front * (deltaTime * speed.z);
 
             // A & D moves the player left or right 
-            if(app->getKeyboard().isPressed(GLFW_KEY_D)) position -= right * (deltaTime * speed.x);
-            if(app->getKeyboard().isPressed(GLFW_KEY_A)) position += right * (deltaTime * speed.x);
+            if(app->getKeyboard().justPressed(GLFW_KEY_D)) position -= right * (deltaTime * speed.x);
+            if(app->getKeyboard().justPressed(GLFW_KEY_A)) position += right * (deltaTime * speed.x);
             // note that the previous four directions are reversed because by default the camera is rotated to look from behind the ninja.
         }
 
