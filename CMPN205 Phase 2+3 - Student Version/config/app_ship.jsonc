@@ -42,7 +42,8 @@
                 "rocky_monkey_specular": "assets/textures/rocky_monkey_specular.jpg",
                 "black": "assets/textures/black.jpg",
                 "white": "assets/textures/white.jpg",
-                "ship": "assets/textures/CourierShip.jpg"
+                "ship": "assets/textures/CourierShip.jpg",
+                "ship_emissive": "assets/textures/CourierShip_emissive.jpg"
             },
             "meshes":{
                 "cube": "assets/models/cube.obj",
@@ -182,77 +183,108 @@
                         }
                     },
                     "tint": [1, 1, 1, 1],
-                    "albedo": "ship"
+                    "albedo": "ship",
+                    "emissive": "ship_emissive",
+                    "specular": "white",
+                    "roughness": "ship"
                 }
             }
         },
         "world":[
-            {
-                "position": [0, 0, 10],
+            // {
+            //     "position": [0, 0, 10],
+            //     "components": [
+            //         {
+            //             "type": "Camera"
+            //         },
+            //         {
+            //             "type": "Free Camera Controller"
+            //         } 
+            //     ],
+            //     "children": [
+            //         {
+            //             "position": [0, -0.6, -1],
+            //             "rotation": [0, 0, 0],
+            //             "scale": [0.01, 0.01, -0.01],
+            //             "components": [
+            //                 {
+            //                     "type": "Mesh Renderer",
+            //                     "mesh": "ship",
+            //                     "material": "ship"
+            //                 }
+            //             ]
+            //         },
+            //         {
+            //             "position": [0, 0, 0],
+            //             "rotation": [0, 0, -90],
+            //             "components": [
+            //                 {
+            //                     "type": "Light",
+            //                     "kind": 1,
+            //                     "diffuse":[1, 1, 1],
+            //                     "specular":[1, 1, 1],
+            //                     "cone_angles":[20, 30],
+            //                     "attenuation":[0.5, 0, 0.5]
+            //                 }
+            //             ]
+            //         }
+            //     ]
+            // },
+            {// Added an entity for the ninja in the scene with a mesh renderer component.
+                "rotation": [0, 0, 0],
+                "scale": [0.01, 0.01, 0.01],
+                "position": [0, 0, -10],
                 "components": [
                     {
-                        "type": "Camera"
+                        "type": "Mesh Renderer",
+                        "mesh": "ship",
+                        "material": "ship"
                     },
                     {
-                        "type": "Free Camera Controller"
-                    } 
+                        "type": "Ninja Camera Controller",       // It holds speed info about our ninja.
+                        "positionSensitivity": [3500.0, 350.0, 350.0]
+
+                    }
                 ],
                 "children": [
                     {
-                        "position": [0, -0.6, -1],
-                        "rotation": [0, 0, 0],
-                        "scale": [0.01, 0.01, -0.01],
-                        "components": [
-                            {
-                                "type": "Mesh Renderer",
-                                "mesh": "ship",
-                                "material": "ship"
-                            }
-                        ]
-                    },
-                    {
-                        "position": [0, 0, 0],
-                        "rotation": [0, 0, -90],
-                        "components": [
-                            {
-                                "type": "Light",
-                                "kind": 1,
-                                "diffuse":[1, 1, 1],
-                                "specular":[1, 1, 1],
-                                "cone_angles":[20, 30],
-                                "attenuation":[0.5, 0, 0.5]
-                            }
+                        "position": [0, 110, -125],  // setting offset to the ninja (Decied with ImGUI)
+                        "rotation": [-20, 180, 0.0 ],
+                        // It's a child entity of the ninja with only the camera component.
+                        "components" : [
+                            {"type": "Camera"}
                         ]
                     }
                 ]
+
             },
-            {
-                "rotation": [-45, 0, 0],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "monkey",
-                        "material": "rocky_monkey"
-                    },
-                    {
-                        "type": "Movement",
-                        "linearVelocity": [0, 0.1, 0],
-                        "angularVelocity": [0, 45, 0]
-                    }
-                ]
-            },
-            {
-                "position": [0, -1, 0],
-                "rotation": [-90, 0, 0],
-                "scale": [10, 10, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "light_grass"
-                    }
-                ]
-            },
+            // {
+            //     "rotation": [-45, 0, 0],
+            //     "components": [
+            //         {
+            //             "type": "Mesh Renderer",
+            //             "mesh": "monkey",
+            //             "material": "rocky_monkey"
+            //         },
+            //         {
+            //             "type": "Movement",
+            //             "linearVelocity": [0, 0.1, 0],
+            //             "angularVelocity": [0, 45, 0]
+            //         }
+            //     ]
+            // },
+            // {
+            //     "position": [0, -1, 0],
+            //     "rotation": [-90, 0, 0],
+            //     "scale": [10, 10, 1],
+            //     "components": [
+            //         {
+            //             "type": "Mesh Renderer",
+            //             "mesh": "plane",
+            //             "material": "light_grass"
+            //         }
+            //     ]
+            // },
             {
                 "position": [0, 10, 0],
                 "rotation": [45, 45, 0],
