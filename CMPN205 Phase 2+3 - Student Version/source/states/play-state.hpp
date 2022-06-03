@@ -8,7 +8,7 @@
 #include <systems/movement.hpp>
 #include <asset-loader.hpp>
 #include <systems/ninja-system.hpp>
-
+#include <systems/light.hpp>
 // This state shows how to use the ECS framework and deserialization.
 class Playstate: public our::State {
 
@@ -17,7 +17,7 @@ class Playstate: public our::State {
     our::FreeCameraControllerSystem cameraController;
     our::NinjaSystem ninjaSystem;                       // will need its update function for each draw (control the ninja).
     our::MovementSystem movementSystem;
-
+    our::LightSystem lightSystem;
     void onInitialize() override {
         // First of all, we get the scene configuration from the app config
         auto& config = getApp()->getConfig()["scene"];
@@ -34,7 +34,7 @@ class Playstate: public our::State {
         ninjaSystem.enter(getApp());                    // done for each system that needs app (e.g. control)
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
-        renderer.initialize(size, config["renderer"]);    
+        renderer.initialize(size, config["renderer"]);
     }
 
     void onDraw(double deltaTime) override {
@@ -42,6 +42,7 @@ class Playstate: public our::State {
         movementSystem.update(&world, (float)deltaTime);
         cameraController.update(&world, (float)deltaTime);
         ninjaSystem.update(&world, (float)deltaTime);
+        lightSystem.update(&world);
         // And finally we use the renderer system to draw the scene
         renderer.render(&world);
     }

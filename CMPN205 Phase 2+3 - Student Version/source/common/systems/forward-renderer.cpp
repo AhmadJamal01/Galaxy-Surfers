@@ -4,7 +4,7 @@
 #include <iostream>
 namespace our
 {
-
+    
     void ForwardRenderer::initialize(glm::ivec2 windowSize, const nlohmann::json &config)
     {
         // First, we store the window size for later use
@@ -132,7 +132,6 @@ namespace our
 
     void ForwardRenderer::render(World *world)
     {
-
         // First of all, we search for a camera and for all the mesh renderers
         CameraComponent *camera = nullptr;
         opaqueCommands.clear();
@@ -240,11 +239,13 @@ namespace our
         }
         //!ADDED FOR LIGHT
         //--------------------
+        int light_count = world->light_count;
+        Light *lights= world->lights;
         for (auto &command : lightSupportCommands)
         {
             command.material->setup();
             glm::mat4 M = command.localToWorld;
-            glm::mat4 M_IT = glm::inverse(glm::transpose(M));
+            glm::mat4 M_IT = glm::transpose(glm::inverse(M));
             glm::vec3 eye = camera->getOwner()->localTransform.position;
             glm::vec3 sky_top= glm::vec3(0.3f, 0.6f, 1.0f);
             glm::vec3 sky_middle= glm::vec3(0.3f, 0.3f, 0.3f);
@@ -257,13 +258,16 @@ namespace our
             command.material->shader->set("sky.middle", sky_middle);
             command.material->shader->set("sky.bottom", sky_bottom);
             //light
-            command.material->shader->set("lights[0].type", 1);
-            command.material->shader->set("lights[0].position", eye);
-            command.material->shader->set("lights[0].diffuse", glm::vec3(1, 0.2, 0.1));
-            command.material->shader->set("lights[0].specular", glm::vec3(1, 0.2, 0.1));
-            command.material->shader->set("lights[0].attenuation",glm::vec3( 1, 0, 0));
-            command.material->shader->set("light_count", 1);
-
+            for (int i = 0; i < light_count; i++){
+                command.material->shader->set("lights[" + std::to_string(i) + "].type", lights[i].kind);
+                command.material->shader->set("lights[" + std::to_string(i) + "].position", lights[i].position);
+                command.material->shader->set("lights[" + std::to_string(i) + "].diffuse", lights[i].diffuse);
+                command.material->shader->set("lights[" + std::to_string(i) + "].specular", lights[i].specular);
+                command.material->shader->set("lights[" + std::to_string(i) + "].attenuation", lights[i].attenuation);
+                command.material->shader->set("lights[" + std::to_string(i) + "].direction", lights[i].direction);
+                command.material->shader->set("lights[" + std::to_string(i) + "].cone_angles", lights[i].cone_angles);
+            }
+            command.material->shader->set("light_count", light_count);
             command.mesh->draw();
         }
         //--------------------
