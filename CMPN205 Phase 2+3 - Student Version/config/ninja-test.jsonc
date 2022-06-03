@@ -12,7 +12,16 @@
     "scene": {
         "renderer":{
             "sky": "assets/textures/sky.jpg",
-            "postprocess": "assets/shaders/postprocess/vignette.frag"
+            "postprocess": 
+            [
+             "assets/shaders/postprocess/cartoonize.frag",
+             "assets/shaders/postprocess/chromatic-aberration.frag",
+             "assets/shaders/postprocess/convolution.frag",
+             "assets/shaders/postprocess/fisheye.frag",
+             "assets/shaders/postprocess/grayscale.frag",
+             "assets/shaders/postprocess/radial-blur.frag",
+             "assets/shaders/postprocess/vignette.frag"
+            ]
         },
         "assets":{
             "shaders":{

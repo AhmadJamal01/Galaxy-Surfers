@@ -31,7 +31,7 @@ class Playstate: public our::State {
         }
         // We initialize the camera controller system since it needs a pointer to the app
         cameraController.enter(getApp());
-        ninjaSystem.enter(getApp());                    // done for each system that needs app (e.g. control)
+        ninjaSystem.enter(getApp(), &renderer);               // pass the forward renderer which will be needed in the ninja
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
         renderer.initialize(size, config["renderer"]);

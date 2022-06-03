@@ -18,7 +18,7 @@
     "scene": {
         "renderer": {
             "sky": "assets/textures/sky.jpg",
-            "postprocess": "assets/shaders/postprocess/chromatic-aberration.frag"
+            "postprocess": "assets/shaders/postprocess/convolution.frag"
         },
         "assets":{
             "shaders":{

@@ -21,11 +21,14 @@ namespace our
         Application* app;               // The application in which the state runs (app holds general data, controlling events)
         bool mouse_locked = false;      // Is the mouse locked (e.g. unlock it in main menu only)
         CameraComponent * playerCamera; // We need external acess to the camera component of the player for ImGUI
-
+        ForwardRenderer * postprocessControl;    // to use the togglePostProcessing function implemented in the forward renderer.
+        enum PostprocessingEffect {cartoonize, chromatic_aberration, convolution, fisheye, grayscale, radial_blur, vignette};
+        int index;      // to rotate postprocessing effects.
     public:
         // When a state enters, it should call this function and give it the pointer to the application
-        void enter(Application* app){
+        void enter(Application* app, ForwardRenderer * FR){         // to set postprocessControl
             this->app = app;
+            this->postprocessControl = FR;
         }
 
         // This should be called every frame to update all entities containing a NinjaControllerComponent
@@ -62,12 +65,20 @@ namespace our
             glm::vec3 speed = controller->positionSensitivity;              // It stores speed.
             // If the LEFT SHIFT key is pressed, we multiply the position sensitivity by the speed up factor
             if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)) speed *= controller->speedupFactor;   // and speed up factor    
-            
+
             // We change the camera position based on the keys WASD/QE
             // Q & E moves the player up and down
             //if(app->getKeyboard().isPressed(GLFW_KEY_Q)) position += up * (deltaTime * speed.y);
             //if(app->getKeyboard().isPressed(GLFW_KEY_E)) position -= up * (deltaTime * speed.y);
+            if(app->getKeyboard().justPressed(GLFW_KEY_P)) {
+            postprocessControl->togglePostProcessing();
+            postprocessControl->choosePostProcessing((++index) % 7);
+            }
 
+            
+            if(app->getKeyboard().justPressed(GLFW_KEY_F)) {
+            postprocessControl->togglePostProcessing();
+            }
             // S & W moves the player back and forth
             //! These will be disabled.
             if(app->getKeyboard().isPressed(GLFW_KEY_W)) position -= front * (deltaTime * speed.z);
