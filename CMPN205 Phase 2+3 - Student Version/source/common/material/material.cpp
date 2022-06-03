@@ -117,13 +117,6 @@ namespace our {
         emissive = AssetLoader<Texture2D>::get(data.value("emissive", "black"));
         specular = AssetLoader<Texture2D>::get(data.value("specular", "black"));
         sampler = AssetLoader<Sampler>::get(data.value("sampler", "default"));
-        
-        std::cout <<  std::endl << albedo << std::endl;
-        std::cout <<  std::endl << ambient_occlusion << std::endl;
-        std::cout <<  std::endl << roughness << std::endl;
-        std::cout <<  std::endl << emissive << std::endl;
-        std::cout <<  std::endl << specular << std::endl;
-        std::cout <<  std::endl << sampler << std::endl;
     }
     //----------------------
 }
