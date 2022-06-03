@@ -179,7 +179,10 @@ namespace our
                 }
                 else if (command.material->affectedByLight)
                 {
-                    lightSupportCommands.push_back(command);
+                    if (entity->name == "obstacle")
+                        ;
+                    else
+                        lightSupportCommands.push_back(command);
                 }
                 else
                 {
@@ -254,16 +257,28 @@ namespace our
             {
                 if (entity->name == "obstacle")
                 {
+
+                    // We construct a command from it
+                    RenderCommand command;
                     // model matrix is the transformation matrix from local space to world space
-                    glm::mat4 localTransform = meshRenderer->getOwner()->getLocalToWorldMatrix();
+                    command.localToWorld = meshRenderer->getOwner()->getLocalToWorldMatrix();
                     // get object center position in the world space
-                    glm::vec4 obj_center = glm::vec4(localTransform * glm::vec4(0, 0, 0, 1));
+                    command.center = glm::vec3(command.localToWorld * glm::vec4(0, 0, 0, 1));
+                    command.mesh = meshRenderer->mesh;
+                    command.material = meshRenderer->material;
+                    // glm::mat4 localTransform = meshRenderer->getOwner()->getLocalToWorldMatrix();
+                    // glm::vec4 obj_center = glm::vec4(localTransform * glm::vec4(0, 0, 0, 1));
                     // transform the object center from world to screen space
-                    glm::vec4 pos = VP * obj_center;
+                    glm::vec4 pos = VP * glm::vec4(command.center, 1.f);
                     // if the object is out of sight, reset its position to be in front of the camera
                     // by 16 units
                     if (pos.z <= 0)
-                        entity->localTransform.position.z += 16;
+                    {
+                        int random_displacement = rand() % 6 - 2;
+                        entity->localTransform.position.z += 16 + random_displacement;
+                    }
+                    command.localToWorld = meshRenderer->getOwner()->getLocalToWorldMatrix();
+                    lightSupportCommands.push_back(command);
                 }
             }
         }
