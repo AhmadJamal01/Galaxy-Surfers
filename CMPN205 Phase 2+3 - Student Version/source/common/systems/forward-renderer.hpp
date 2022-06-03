@@ -11,7 +11,6 @@
 
 namespace our
 {
-
     // The render command stores command that tells the renderer that it should draw
     // the given mesh at the given localToWorld matrix using the given material
     // The renderer will fill this struct using the mesh renderer components
@@ -42,12 +41,17 @@ namespace our
         // Objects used for Postprocessing
         GLuint postprocessFrameBuffer, postProcessVertexArray;
         Texture2D *colorTarget, *depthTarget;
-        TexturedMaterial *postprocessMaterial;
 
+        TexturedMaterial *postprocessMaterial;
+        TexturedMaterial *postprocessMaterialTemp;       // Added a temp for postprocess material
+        std::vector<ShaderProgram *> postprocessShaders; // So that we can load multiple postprocess effects.
     public:
         // Initialize the renderer including the sky and the Postprocessing objects.
         // windowSize is the width & height of the window (in pixels).
         void initialize(glm::ivec2 windowSize, const nlohmann::json &config);
+        // Toggle postprocessing
+        void togglePostProcessing(); // Will switch postProcessMaterial from null to the temp which has the post processing effect.
+        void choosePostProcessing(int index);
         // Clean up the renderer
         void destroy();
         // This function should be called every frame to draw the given world

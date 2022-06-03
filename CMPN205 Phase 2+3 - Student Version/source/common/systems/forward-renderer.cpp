@@ -90,20 +90,40 @@ namespace our
             postprocessSampler->set(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
             // Create the post processing shader
-            ShaderProgram *postprocessShader = new ShaderProgram();
-            postprocessShader->attach("assets/shaders/fullscreen.vert", GL_VERTEX_SHADER);
-            postprocessShader->attach(config.value<std::string>("postprocess", ""), GL_FRAGMENT_SHADER);
-            postprocessShader->link();
+            for (const auto &shader : config["postprocess"]) // Assume its an array of postprocessing shaders
+            {
+                ShaderProgram *postprocessShader = new ShaderProgram();
+                postprocessShader->attach("assets/shaders/fullscreen.vert", GL_VERTEX_SHADER);
+                postprocessShader->attach(shader.get<std::string>(), GL_FRAGMENT_SHADER);
+                postprocessShader->link();
+                postprocessShaders.push_back(postprocessShader);
+            }
 
-            // Create a post processing material
-            postprocessMaterial = new TexturedMaterial();
-            postprocessMaterial->shader = postprocessShader;
-            postprocessMaterial->texture = colorTarget;
-            postprocessMaterial->sampler = postprocessSampler;
-            // The default options are fine but we don't need to interact with the depth buffer
-            // so it is more performant to disable the depth mask
-            postprocessMaterial->pipelineState.depthMask = false;
+            // Create a post processing material in the temp (initially postProcessMaterial will be null and we use the normal shader)
+            // We can switch between postProcessMaterial from null to this value to see the postprocessing effect.
+            if (postprocessShaders.size() > 0)
+            {
+                postprocessMaterialTemp = new TexturedMaterial();
+                postprocessMaterialTemp->shader = postprocessShaders[0];
+                postprocessMaterialTemp->texture = colorTarget;
+                postprocessMaterialTemp->sampler = postprocessSampler;
+                // The default options are fine but we don't need to interact with the depth buffer
+                // so it is more performant to disable the depth mask
+                postprocessMaterialTemp->pipelineState.depthMask = false;
+            }
         }
+    }
+
+    // Implemented a way to toggle postprocessing
+    void ForwardRenderer::togglePostProcessing()
+    {
+        postprocessMaterial = (postprocessMaterial == nullptr) ? postprocessMaterialTemp : nullptr;
+    }
+
+    void ForwardRenderer::choosePostProcessing(int index) // To choose the preprocessing effect
+    {
+        if (index < postprocessShaders.size())
+            postprocessMaterialTemp->shader = postprocessShaders[index];
     }
 
     void ForwardRenderer::destroy()
@@ -132,12 +152,12 @@ namespace our
 
     void ForwardRenderer::render(World *world)
     {
-
         // First of all, we search for a camera and for all the mesh renderers
         CameraComponent *camera = nullptr;
         opaqueCommands.clear();
         lightSupportCommands.clear();
         transparentCommands.clear();
+        int entityIdx = 0;
         for (auto entity : world->getEntities())
         {
             // If we hadn't found a camera yet, we look for a camera in this entity
@@ -153,10 +173,7 @@ namespace our
                 command.mesh = meshRenderer->mesh;
                 command.material = meshRenderer->material;
                 // if it is transparent, we add it to the transparent commands list
-
-                if (entity->name == "obstacle")
-                    ;
-                else if (command.material->transparent)
+                if (command.material->transparent)
                 {
                     transparentCommands.push_back(command);
                 }
@@ -189,7 +206,7 @@ namespace our
                   {
             //TODO: (Req 8) Finish this function
             // HINT: the following return should return true "first" should be drawn before "second". 
-            //one way to determine which cobject is further from the camera is to find its projection
+            //one way to determine which object is further from the camera is to find its projection
             //on the direction of cameraForward, this can be easily noticed when the problem is sketched
             //the object with the higher value of projection is the one farthest and thus should be drawn first
             return (glm::dot(cameraForward,first.center) > glm::dot(cameraForward , second.center)); });
@@ -230,7 +247,7 @@ namespace our
         // configures openGl to clear the color buffer and depth buffer each frame
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // DONE: Draw Obstacles
+        // DONE: Update Obstacles position
         for (auto entity : world->getEntities())
         {
             if (auto meshRenderer = entity->getComponent<MeshRendererComponent>(); meshRenderer)
@@ -239,24 +256,14 @@ namespace our
                 {
                     // model matrix is the transformation matrix from local space to world space
                     glm::mat4 localTransform = meshRenderer->getOwner()->getLocalToWorldMatrix();
-                    // to obtain MVP we need to multiply the model matrix from the left which is equivalent to
-                    // multiplying from the right in code
-                    glm::mat4 transform = VP * localTransform;
                     // get object center position in the world space
                     glm::vec4 obj_center = glm::vec4(localTransform * glm::vec4(0, 0, 0, 1));
                     // transform the object center from world to screen space
                     glm::vec4 pos = VP * obj_center;
                     // if the object is out of sight, reset its position to be in front of the camera
-                    // by 15 units
-                    if (pos.z <= -1)
-                        entity->localTransform.position.z += 15;
-
-                    // setup object material
-                    meshRenderer->material->setup();
-                    // send transform matrix to the shader as union
-                    meshRenderer->material->shader->set("transform", transform);
-                    // draw the object
-                    meshRenderer->mesh->draw();
+                    // by 16 units
+                    if (pos.z <= 0)
+                        entity->localTransform.position.z += 16;
                 }
             }
         }
@@ -277,11 +284,14 @@ namespace our
 
         //! ADDED FOR LIGHT
         //--------------------
+        int light_count = world->light_count;
+        Light *lights = world->lights;
         for (auto &command : lightSupportCommands)
         {
             command.material->setup();
+
             glm::mat4 M = command.localToWorld;
-            glm::mat4 M_IT = glm::inverse(glm::transpose(M));
+            glm::mat4 M_IT = glm::transpose(glm::inverse(M));
             glm::vec3 eye = camera->getOwner()->localTransform.position;
             glm::vec3 sky_top = glm::vec3(0.3f, 0.6f, 1.0f);
             glm::vec3 sky_middle = glm::vec3(0.3f, 0.3f, 0.3f);
@@ -293,14 +303,19 @@ namespace our
             command.material->shader->set("sky.top", sky_top);
             command.material->shader->set("sky.middle", sky_middle);
             command.material->shader->set("sky.bottom", sky_bottom);
-            // light
-            command.material->shader->set("lights[0].type", 1);
-            command.material->shader->set("lights[0].position", eye);
-            command.material->shader->set("lights[0].diffuse", glm::vec3(1, 0.2, 0.1));
-            command.material->shader->set("lights[0].specular", glm::vec3(1, 0.2, 0.1));
-            command.material->shader->set("lights[0].attenuation", glm::vec3(1, 0, 0));
-            command.material->shader->set("light_count", 1);
 
+            // light
+            for (int i = 0; i < light_count; i++)
+            {
+                command.material->shader->set("lights[" + std::to_string(i) + "].type", lights[i].kind);
+                command.material->shader->set("lights[" + std::to_string(i) + "].position", lights[i].position);
+                command.material->shader->set("lights[" + std::to_string(i) + "].diffuse", lights[i].diffuse);
+                command.material->shader->set("lights[" + std::to_string(i) + "].specular", lights[i].specular);
+                command.material->shader->set("lights[" + std::to_string(i) + "].attenuation", lights[i].attenuation);
+                command.material->shader->set("lights[" + std::to_string(i) + "].direction", lights[i].direction);
+                command.material->shader->set("lights[" + std::to_string(i) + "].cone_angles", lights[i].cone_angles);
+            }
+            command.material->shader->set("light_count", light_count);
             command.mesh->draw();
         }
         //--------------------
@@ -343,7 +358,7 @@ namespace our
         // If there is a postprocess material, apply postprocessing
         if (postprocessMaterial)
         {
-            // done TODO: (Req 10) Return to the default framebuffer
+            // DONE: (Req 10) Return to the default framebuffer
             // by calling glBindFramebuffer with 0 as the target buffer
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
             // done TODO: (Req 10) Setup the postprocess material and draw the fullscreen triangle

@@ -6,12 +6,22 @@
 namespace our {
 
     // This class holds a set of entities
+    struct Light {
+        int kind;
+        glm::vec3 position;
+        glm::vec3 direction;
+        glm::vec3 diffuse;
+        glm::vec3 specular;
+        glm::vec3 attenuation;
+        glm::vec2 cone_angles;
+    };
     class World {
         std::unordered_set<Entity*> entities; // These are the entities held by this world
         std::unordered_set<Entity*> markedForRemoval; // These are the entities that are awaiting to be deleted
                                                       // when deleteMarkedEntities is called
     public:
-
+        Light lights[16];
+        int light_count=0;
         World() = default;
 
         // This will deserialize a json array of entities and add the new entities to the current world
