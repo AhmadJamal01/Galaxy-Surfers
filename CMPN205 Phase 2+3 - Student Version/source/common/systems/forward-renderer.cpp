@@ -27,11 +27,11 @@ namespace our
             //  We will draw the sphere from the inside, so what options should we pick for the face culling.
             PipelineState skyPipelineState{};
 
-            skyPipelineState.depthTesting.enabled = true;          //set depthTesting Enabled as sky would be drawn after opaque
-            skyPipelineState.depthTesting.function = GL_LEQUAL;   // LEQUAL because object would be drawn from near to far
+            skyPipelineState.depthTesting.enabled = true;       // set depthTesting Enabled as sky would be drawn after opaque
+            skyPipelineState.depthTesting.function = GL_LEQUAL; // LEQUAL because object would be drawn from near to far
 
-            skyPipelineState.faceCulling.enabled = true;          // set faceCulling Enabled so we can draw the sphere from inside
-            skyPipelineState.faceCulling.culledFace = GL_FRONT;  // culling the Front of sphere
+            skyPipelineState.faceCulling.enabled = true;        // set faceCulling Enabled so we can draw the sphere from inside
+            skyPipelineState.faceCulling.culledFace = GL_FRONT; // culling the Front of sphere
 
             // Load the sky texture (note that we don't need mipmaps since we want to avoid any unnecessary blurring while rendering the sky)
             std::string skyTextureFile = config.value<std::string>("sky", "");
@@ -153,12 +153,15 @@ namespace our
                 command.mesh = meshRenderer->mesh;
                 command.material = meshRenderer->material;
                 // if it is transparent, we add it to the transparent commands list
-                
-                if (command.material->transparent)
+
+                if (entity->name == "obstacle")
+                    ;
+                else if (command.material->transparent)
                 {
                     transparentCommands.push_back(command);
                 }
-                else if (command.material->affectedByLight){
+                else if (command.material->affectedByLight)
+                {
                     lightSupportCommands.push_back(command);
                 }
                 else
@@ -226,6 +229,38 @@ namespace our
         // TODO: (Req 8) Clear the color and depth buffers
         // configures openGl to clear the color buffer and depth buffer each frame
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // DONE: Draw Obstacles
+        for (auto entity : world->getEntities())
+        {
+            if (auto meshRenderer = entity->getComponent<MeshRendererComponent>(); meshRenderer)
+            {
+                if (entity->name == "obstacle")
+                {
+                    // model matrix is the transformation matrix from local space to world space
+                    glm::mat4 localTransform = meshRenderer->getOwner()->getLocalToWorldMatrix();
+                    // to obtain MVP we need to multiply the model matrix from the left which is equivalent to
+                    // multiplying from the right in code
+                    glm::mat4 transform = VP * localTransform;
+                    // get object center position in the world space
+                    glm::vec4 obj_center = glm::vec4(localTransform * glm::vec4(0, 0, 0, 1));
+                    // transform the object center from world to screen space
+                    glm::vec4 pos = VP * obj_center;
+                    // if the object is out of sight, reset its position to be in front of the camera
+                    // by 15 units
+                    if (pos.z <= -1)
+                        entity->localTransform.position.z += 15;
+
+                    // setup object material
+                    meshRenderer->material->setup();
+                    // send transform matrix to the shader as union
+                    meshRenderer->material->shader->set("transform", transform);
+                    // draw the object
+                    meshRenderer->mesh->draw();
+                }
+            }
+        }
+
         // TODO: (Req 8) Draw all the opaque commands
         //  Don't forget to set the "transform" uniform to be equal the model-view-projection matrix for each render command
         for (auto &command : opaqueCommands)
@@ -234,11 +269,13 @@ namespace our
             // to obtain MVP we need to multiply the model matrix from the left which is equivalent to
             // multiplying from the right in code
             glm::mat4 transform = VP * command.localToWorld;
+
             command.material->setup();
             command.material->shader->set("transform", transform);
             command.mesh->draw();
         }
-        //!ADDED FOR LIGHT
+
+        //! ADDED FOR LIGHT
         //--------------------
         for (auto &command : lightSupportCommands)
         {
@@ -246,9 +283,9 @@ namespace our
             glm::mat4 M = command.localToWorld;
             glm::mat4 M_IT = glm::inverse(glm::transpose(M));
             glm::vec3 eye = camera->getOwner()->localTransform.position;
-            glm::vec3 sky_top= glm::vec3(0.3f, 0.6f, 1.0f);
-            glm::vec3 sky_middle= glm::vec3(0.3f, 0.3f, 0.3f);
-            glm::vec3 sky_bottom = glm::vec3( 0.1f, 0.1f, 0.0f);
+            glm::vec3 sky_top = glm::vec3(0.3f, 0.6f, 1.0f);
+            glm::vec3 sky_middle = glm::vec3(0.3f, 0.3f, 0.3f);
+            glm::vec3 sky_bottom = glm::vec3(0.1f, 0.1f, 0.0f);
             command.material->shader->set("M", M);
             command.material->shader->set("VP", VP);
             command.material->shader->set("M_IT", M_IT);
@@ -256,12 +293,12 @@ namespace our
             command.material->shader->set("sky.top", sky_top);
             command.material->shader->set("sky.middle", sky_middle);
             command.material->shader->set("sky.bottom", sky_bottom);
-            //light
+            // light
             command.material->shader->set("lights[0].type", 1);
             command.material->shader->set("lights[0].position", eye);
             command.material->shader->set("lights[0].diffuse", glm::vec3(1, 0.2, 0.1));
             command.material->shader->set("lights[0].specular", glm::vec3(1, 0.2, 0.1));
-            command.material->shader->set("lights[0].attenuation",glm::vec3( 1, 0, 0));
+            command.material->shader->set("lights[0].attenuation", glm::vec3(1, 0, 0));
             command.material->shader->set("light_count", 1);
 
             command.mesh->draw();
@@ -277,7 +314,7 @@ namespace our
 
             // TODO: (Req 9) Create a model matrix for the sky such that it always follows the camera (sky sphere center = camera position)
             glm::mat4 identity(1.0f);
-            glm::mat4 M = glm::translate(identity, cameraPosition);  // translating shpere position to camera position
+            glm::mat4 M = glm::translate(identity, cameraPosition); // translating shpere position to camera position
 
             // TODO: (Req 9) We want the sky to be drawn behind everything (in NDC space, z=1)
             //  We can acheive the is by multiplying by an extra matrix after the projection but what values should we put in it?
@@ -289,7 +326,7 @@ namespace our
                 0.0f, 0.0f, 1.0f, 1.0f  // Column4      // set z=1
             );
             // TODO: (Req 9) set the "transform" uniform
-            glm::mat4 skyTransform = alwaysBehindTransform * VP * M;   //trasforming sky to depth = 1 
+            glm::mat4 skyTransform = alwaysBehindTransform * VP * M; // trasforming sky to depth = 1
             skyMaterial->shader->set("transform", skyTransform);
             // TODO: (Req 9) draw the sky sphere
             skySphere->draw();
