@@ -27,53 +27,104 @@
           "vs": "assets/shaders/tinted.vert",
           "fs": "assets/shaders/tinted.frag"
         },
-        "textured": {
-          "vs": "assets/shaders/textured.vert",
-          "fs": "assets/shaders/textured.frag"
-        },
-        "lightened": {
-          "vs": "assets/shaders/light.vert",
-          "fs": "assets/shaders/light.frag"
-        }
-      },
-      "textures": {
-        "moon": "assets/textures/moon.jpg",
-        "grass": "assets/textures/grass_ground_d.jpg",
-        "wood": "assets/textures/wood.jpg",
-        "glass": "assets/textures/glass-panels.png",
-        "monkey": "assets/textures/monkey.png",
-        "monkey_albedo": "assets/textures/rocky_monkey_albedo.jpg",
-        "monkey_ambient_occlusion": "assets/textures/rocky_monkey_ambient_occlusion.jpg",
-        "monkey_emissive": "assets/textures/rocky_monkey_emissive.jpg",
-        "monkey_roughness": "assets/textures/rocky_monkey_roughness.jpg",
-        "monkey_specular": "assets/textures/rocky_monkey_specular.jpg",
-        "black": "assets/textures/black.jpg",
-        "white": "assets/textures/white.jpg",
-        "ship": "assets/textures/CourierShip.jpg",
-        "ship_emissive": "assets/textures/CourierShip_emissive.jpg",
-        "asteroid": "assets/textures/asteroid.bmp"
-      },
-      "meshes": {
-        "cube": "assets/models/cube.obj",
-        "monkey": "assets/models/monkey.obj",
-        "plane": "assets/models/plane.obj",
-        "sphere": "assets/models/sphere.obj",
-        "ship": "assets/models/CourierShip.obj",
-        "asteroid": "assets/models/asteroid.obj"
-      },
-      "samplers": {
-        "default": {},
-        "pixelated": {
-          "MAG_FILTER": "GL_NEAREST"
-        }
-      },
-      "materials": {
-        "monkey": {
-          "type": "LightMaterial",
-          "shader": "lightened",
-          "pipelineState": {
-            "depthTesting": {
-              "enabled": true
+        "assets":{
+            "shaders":{
+                "tinted":{
+                    "vs":"assets/shaders/tinted.vert",
+                    "fs":"assets/shaders/tinted.frag"
+                },
+                "textured":{
+                    "vs":"assets/shaders/textured.vert",
+                    "fs":"assets/shaders/textured.frag"
+                },
+                "lightened":{
+                    "vs":"assets/shaders/light.vert",
+                    "fs":"assets/shaders/light.frag"
+                }
+            },
+            "textures":{
+                "moon": "assets/textures/moon.jpg",
+                "grass": "assets/textures/grass_ground_d.jpg",
+                "wood": "assets/textures/wood.jpg",
+                "glass": "assets/textures/glass-panels.png",
+                "monkey": "assets/textures/monkey.png",
+                "monkey_albedo": "assets/textures/rocky_monkey_albedo.jpg",
+                "monkey_ambient_occlusion": "assets/textures/rocky_monkey_ambient_occlusion.jpg",
+                "monkey_emissive": "assets/textures/rocky_monkey_emissive.jpg",
+                "monkey_roughness": "assets/textures/rocky_monkey_roughness.jpg",
+                "monkey_specular": "assets/textures/rocky_monkey_specular.jpg",
+                "black": "assets/textures/black.jpg",
+                "white": "assets/textures/white.jpg",
+                "ship": "assets/textures/CourierShip.jpg",
+                "ship_emissive": "assets/textures/CourierShip_emissive.jpg",
+                "asteroid": "assets/textures/asteroid.bmp"
+            },
+            "meshes":{
+                "cube": "assets/models/cube.obj",
+                "monkey": "assets/models/monkey.obj",
+                "plane": "assets/models/plane.obj",
+                "sphere": "assets/models/sphere.obj",
+                "ship": "assets/models/CourierShip.obj",
+                "asteroid": "assets/models/asteroid.obj"
+            },
+            "samplers":{
+                "default":{},
+                "pixelated":{
+                    "MAG_FILTER": "GL_NEAREST"
+                }
+            },
+            "materials":{
+                "monkey":{
+                    "type": "LightMaterial",
+                    "shader": "lightened",
+                    "pipelineState": {
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "albedo": "monkey_albedo",
+                    "ambient_occlusion": "monkey_ambient_occlusion",
+                    "emissive": "monkey_emissive",
+                    "roughness": "monkey_roughness",
+                    "specular": "monkey_specular"
+                },
+                "shiny_moon":{
+                    "type": "LightMaterial",
+                    "shader": "lightened",
+                    "pipelineState": {
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "emissive": "moon"
+                },
+                
+                "ship":{
+                    "type": "LightMaterial",
+                    "shader": "lightened",
+                    "pipelineState": {
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "albedo": "ship",
+                    "emissive": "ship_emissive",
+                    "specular": "white",
+                    "roughness": "ship",
+                    "ambient_occlusion": "ship"
+                },
+                "asteroid":{
+                    "type": "LightMaterial",
+                    "shader": "lightened",
+                    "pipelineState": {
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "albedo": "asteroid",
+                    "roughness": "asteroid",
+                    "ambient_occlusion": "asteroid"
+                }
             }
           },
           "albedo": "monkey_albedo",
@@ -82,39 +133,98 @@
           "roughness": "monkey_roughness",
           "specular": "monkey_specular"
         },
-        "shiny_moon": {
-          "type": "LightMaterial",
-          "shader": "lightened",
-          "pipelineState": {
-            "depthTesting": {
-              "enabled": true
-            }
-          },
-          "emissive": "moon"
-        },
-        "ship": {
-          "type": "LightMaterial",
-          "shader": "lightened",
-          "pipelineState": {
-            "depthTesting": {
-              "enabled": true
-            }
-          },
-          "albedo": "ship",
-          "emissive": "ship_emissive",
-          "specular": "white",
-          "roughness": "ship",
-          "ambient_occlusion": "ship"
-        },
-        "asteroid": {
-          "type": "LightMaterial",
-          "shader": "lightened",
-          "pipelineState": {
-            "faceCulling": {
-              "enabled": true
+        "world":[
+            //!Ship
+            {
+                "rotation": [0, 0, 0],
+                "scale": [0.01, 0.01, 0.01],
+                "position": [0, 0, -10],
+                "name":"player",
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "ship",
+                        "material": "ship"
+                    },
+                    {
+                        "type": "Ninja Camera Controller",       // It holds speed info about our ninja.
+                        "positionSensitivity": [42000.0, 350.0, 350.0]
+                    }
+                ],
+                "children": [
+                    {
+                        "position": [0, 110, -125],  // setting offset to the ninja (Decied with ImGUI)
+                        "rotation": [-20, 180, 0.0 ],
+                        // It's a child entity of the ninja with only the camera component.q
+                        "components" : [
+                            {"type": "Camera"}
+                        ]
+                    },
+                    {
+                        "position": [0, 0, 100],
+                        "rotation": [0, 0, 90],
+                        "components": [
+                            {
+                                "type": "Light",
+                                "kind": 2,
+                                "diffuse":[1, 1, 1],
+                                "specular":[1, 1, 1],
+                                "cone_angles":[0, 1],
+                                "attenuation":[0, 0, 0.5]
+                            }
+                        ]
+                    }
+                ]
             },
-            "depthTesting": {
-              "enabled": true
+            //!asteroid
+            {
+                "position": [0, 0, 0],
+                "scale": [0.01, 0.01, 0.01],
+                "rotation": [0, 0, 0],
+                "name":"Asteroid",
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "asteroid",
+                        "material": "asteroid"
+                    },
+                    {
+                        "type": "Movement",
+                        "angularVelocity": [10, 20, 30]
+                    }
+                ]
+            },
+            //!moon
+            {
+                "position": [0, 30, 0],
+                "rotation": [45, 45, 0],
+                "scale": [5, 5, 5],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "sphere",
+                        "material": "shiny_moon"
+                    },
+                    {
+                        "type": "Movement",
+                        "angularVelocity": [0, 90, 0]
+                    }
+                ]//,
+                // "children": [
+                //     {
+                //         "position": [0, 0, 0],
+                //         "rotation": [0, -90, 0],
+                //         "components": [
+                //             {
+                //                 "type": "Light",
+                //                 "kind": 1,
+                //                 "diffuse":[1, 1, 1],
+                //                 "specular":[1, 1, 1],
+                //                 "attenuation":[0.0005, 0,0]
+                //             }
+                //         ]
+                //     }
+                // ]
             }
           },
           "albedo": "asteroid",
