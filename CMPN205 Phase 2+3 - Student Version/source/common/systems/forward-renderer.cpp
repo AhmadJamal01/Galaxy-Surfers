@@ -4,7 +4,7 @@
 #include <iostream>
 namespace our
 {
-    
+
     void ForwardRenderer::initialize(glm::ivec2 windowSize, const nlohmann::json &config)
     {
         // First, we store the window size for later use
@@ -90,7 +90,7 @@ namespace our
             postprocessSampler->set(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
             // Create the post processing shader
-            for (const auto& shader : config["postprocess"])       // Assume its an array of postprocessing shaders
+            for (const auto &shader : config["postprocess"]) // Assume its an array of postprocessing shaders
             {
                 ShaderProgram *postprocessShader = new ShaderProgram();
                 postprocessShader->attach("assets/shaders/fullscreen.vert", GL_VERTEX_SHADER);
@@ -120,7 +120,7 @@ namespace our
         postprocessMaterial = (postprocessMaterial == nullptr) ? postprocessMaterialTemp : nullptr;
     }
 
-    void ForwardRenderer::choosePostProcessing(int index)       // To choose the preprocessing effect
+    void ForwardRenderer::choosePostProcessing(int index) // To choose the preprocessing effect
     {
         if (index < postprocessShaders.size())
             postprocessMaterialTemp->shader = postprocessShaders[index];
@@ -157,6 +157,7 @@ namespace our
         opaqueCommands.clear();
         lightSupportCommands.clear();
         transparentCommands.clear();
+        int entityIdx = 0;
         for (auto entity : world->getEntities())
         {
             // If we hadn't found a camera yet, we look for a camera in this entity
@@ -172,14 +173,16 @@ namespace our
                 command.mesh = meshRenderer->mesh;
                 command.material = meshRenderer->material;
                 // if it is transparent, we add it to the transparent commands list
-
                 if (command.material->transparent)
                 {
                     transparentCommands.push_back(command);
                 }
                 else if (command.material->affectedByLight)
                 {
-                    lightSupportCommands.push_back(command);
+                    if (entity->name == "obstacle")
+                        ;
+                    else
+                        lightSupportCommands.push_back(command);
                 }
                 else
                 {
@@ -206,7 +209,7 @@ namespace our
                   {
             //TODO: (Req 8) Finish this function
             // HINT: the following return should return true "first" should be drawn before "second". 
-            //one way to determine which cobject is further from the camera is to find its projection
+            //one way to determine which object is further from the camera is to find its projection
             //on the direction of cameraForward, this can be easily noticed when the problem is sketched
             //the object with the higher value of projection is the one farthest and thus should be drawn first
             return (glm::dot(cameraForward,first.center) > glm::dot(cameraForward , second.center)); });
@@ -246,6 +249,40 @@ namespace our
         // TODO: (Req 8) Clear the color and depth buffers
         // configures openGl to clear the color buffer and depth buffer each frame
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // DONE: Update Obstacles position
+        for (auto entity : world->getEntities())
+        {
+            if (auto meshRenderer = entity->getComponent<MeshRendererComponent>(); meshRenderer)
+            {
+                if (entity->name == "obstacle")
+                {
+
+                    // We construct a command from it
+                    RenderCommand command;
+                    // model matrix is the transformation matrix from local space to world space
+                    command.localToWorld = meshRenderer->getOwner()->getLocalToWorldMatrix();
+                    // get object center position in the world space
+                    command.center = glm::vec3(command.localToWorld * glm::vec4(0, 0, 0, 1));
+                    command.mesh = meshRenderer->mesh;
+                    command.material = meshRenderer->material;
+                    // glm::mat4 localTransform = meshRenderer->getOwner()->getLocalToWorldMatrix();
+                    // glm::vec4 obj_center = glm::vec4(localTransform * glm::vec4(0, 0, 0, 1));
+                    // transform the object center from world to screen space
+                    glm::vec4 pos = VP * glm::vec4(command.center, 1.f);
+                    // if the object is out of sight, reset its position to be in front of the camera
+                    // by 16 units
+                    if (pos.z <= 0)
+                    {
+                        int random_displacement = rand() % 6 - 2;
+                        entity->localTransform.position.z += 16 + random_displacement;
+                    }
+                    command.localToWorld = meshRenderer->getOwner()->getLocalToWorldMatrix();
+                    lightSupportCommands.push_back(command);
+                }
+            }
+        }
+
         // TODO: (Req 8) Draw all the opaque commands
         //  Don't forget to set the "transform" uniform to be equal the model-view-projection matrix for each render command
         for (auto &command : opaqueCommands)
@@ -254,17 +291,20 @@ namespace our
             // to obtain MVP we need to multiply the model matrix from the left which is equivalent to
             // multiplying from the right in code
             glm::mat4 transform = VP * command.localToWorld;
+
             command.material->setup();
             command.material->shader->set("transform", transform);
             command.mesh->draw();
         }
+
         //! ADDED FOR LIGHT
         //--------------------
         int light_count = world->light_count;
-        Light *lights= world->lights;
+        Light *lights = world->lights;
         for (auto &command : lightSupportCommands)
         {
             command.material->setup();
+
             glm::mat4 M = command.localToWorld;
             glm::mat4 M_IT = glm::transpose(glm::inverse(M));
             glm::vec3 eye = camera->getOwner()->localTransform.position;
@@ -278,8 +318,10 @@ namespace our
             command.material->shader->set("sky.top", sky_top);
             command.material->shader->set("sky.middle", sky_middle);
             command.material->shader->set("sky.bottom", sky_bottom);
-            //light
-            for (int i = 0; i < light_count; i++){
+
+            // light
+            for (int i = 0; i < light_count; i++)
+            {
                 command.material->shader->set("lights[" + std::to_string(i) + "].type", lights[i].kind);
                 command.material->shader->set("lights[" + std::to_string(i) + "].position", lights[i].position);
                 command.material->shader->set("lights[" + std::to_string(i) + "].diffuse", lights[i].diffuse);
