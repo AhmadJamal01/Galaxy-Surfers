@@ -98,6 +98,12 @@ namespace our
             // A & D moves the player left or right 
             if(app->getKeyboard().isPressed(GLFW_KEY_D)) position += right * (deltaTime * current_sensitivity.x);
             if(app->getKeyboard().isPressed(GLFW_KEY_A)) position -= right * (deltaTime * current_sensitivity.x);
+            // if(app->getKeyboard().isPressed(GLFW_KEY_F)){
+            //     app->changeState("menu");
+            //     return;
+            // }
+
+
         }
 
         // When the state exits, it should call this function to ensure the mouse is unlocked

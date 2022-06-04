@@ -14,6 +14,8 @@
 #include "states/material-test-state.hpp"
 #include "states/entity-test-state.hpp"
 #include "states/renderer-test-state.hpp"
+#include "states/menu-state.hpp"
+
 
 int main(int argc, char **argv)
 {
@@ -42,6 +44,7 @@ int main(int argc, char **argv)
     our::Application app(app_config);
 
     // Register all the states of the project in the application
+    app.registerState<MenuState>("menu-state");
     app.registerState<Playstate>("main");
     app.registerState<MeshTestState>("mesh-test");
     app.registerState<TransformTestState>("transform-test");
@@ -55,6 +58,7 @@ int main(int argc, char **argv)
     if (app_config.contains(std::string{"start-scene"}))
     {
         app.changeState(app_config["start-scene"].get<std::string>());
+        app.changeState("menu-state");
     }
 
     // Finally run the application
