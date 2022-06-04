@@ -266,16 +266,18 @@ namespace our
                     command.center = glm::vec3(command.localToWorld * glm::vec4(0, 0, 0, 1));
                     command.mesh = meshRenderer->mesh;
                     command.material = meshRenderer->material;
-                    // glm::mat4 localTransform = meshRenderer->getOwner()->getLocalToWorldMatrix();
-                    // glm::vec4 obj_center = glm::vec4(localTransform * glm::vec4(0, 0, 0, 1));
                     // transform the object center from world to screen space
                     glm::vec4 pos = VP * glm::vec4(command.center, 1.f);
                     // if the object is out of sight, reset its position to be in front of the camera
                     // by 16 units
                     if (pos.z <= 0)
                     {
-                        int random_displacement = rand() % 6 - 2;
-                        entity->localTransform.position.z += 16 + random_displacement;
+                        // add random number to player z coordinate so it's not always the same value.
+                        int z_random_displacement = rand() % 6 - 2;
+                        entity->localTransform.position.z += 16 + z_random_displacement;
+                        // add random number to player x coordinate so it's not always the same value.
+                        int x_random_displacement = rand() % 3 - 1;
+                        entity->localTransform.position.x += x_random_displacement;
                     }
                     command.localToWorld = meshRenderer->getOwner()->getLocalToWorldMatrix();
                     lightSupportCommands.push_back(command);
