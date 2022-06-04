@@ -67,6 +67,7 @@ void main(){
     int clamped_light_count = min(MAX_LIGHTS, light_count);
     for(int i = 0; i < clamped_light_count; i++){
         Light light = lights[i];
+        light.direction = normalize(light.direction);
 
         vec3 direction_to_light = -light.direction;
         if(light.type != DIRECTIONAL){
@@ -75,7 +76,7 @@ void main(){
         
         vec3 diffuse = light.diffuse * material_diffuse * max(0, dot(normal, direction_to_light));
         
-        vec3 reflected = normalize(reflect(-direction_to_light, normal));
+        vec3 reflected = normalize(reflect(-direction_to_light, normal));//Added normalization
         
         vec3 specular = light.specular * material_specular * pow(max(0, dot(view, reflected)), material_shininess);
 
@@ -85,7 +86,7 @@ void main(){
             attenuation /= dot(light.attenuation, vec3(d*d, d, 1));
             if(light.type == SPOT){
                 float angle = acos(dot(-direction_to_light, light.direction));
-                attenuation *= 1/(smoothstep(light.cone_angles.x, light.cone_angles.y, angle)+1);
+                attenuation *= max(0,1-(1-cos(angle-light.cone_angles.y))/(1-cos(light.cone_angles.x)));
             }
         }
 

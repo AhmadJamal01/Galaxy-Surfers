@@ -154,15 +154,15 @@
           {
             "scale": [100, 100, 100],
             "position": [0, 0, 1],
-            "rotation": [0, 0, -90],
+            "rotation": [0, 0, 1],
             "components": [
               {
                 "type": "Light",
                 "kind": 2,
                 "diffuse": [1, 1, 1],
                 "specular": [1, 1, 1],
-                "cone_angles": [0, 5],
-                "attenuation": [0.1, 0, 0.4]
+                "cone_angles": [20, 0],
+                "attenuation": [0.01, 0, 0.4]
               }
             ]
           },
