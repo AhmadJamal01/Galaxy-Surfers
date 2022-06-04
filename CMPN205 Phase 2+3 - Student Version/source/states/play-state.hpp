@@ -1,14 +1,12 @@
 #pragma once
 
 #include <application.hpp>
-
 #include <ecs/world.hpp>
 #include <systems/forward-renderer.hpp>
 #include <systems/free-camera-controller.hpp>
 #include <systems/movement.hpp>
 #include <asset-loader.hpp>
 #include <systems/ninja-system.hpp>
-
 #include <systems/collision-system.hpp>
 
 
@@ -20,7 +18,7 @@ class Playstate : public our::State
     our::World world;
     our::ForwardRenderer renderer;
     our::FreeCameraControllerSystem cameraController;
-    our::NinjaSystem ninjaSystem; // will need its update function for each draw (control the ninja).
+    our::NinjaSystem ninjaSystem; //= will need its update function for each draw (control the ninja).
     our::MovementSystem movementSystem;
 
     our::CollisionSystem collisionSystem;
@@ -47,7 +45,7 @@ class Playstate : public our::State
         renderer.initialize(size, config["renderer"]);
     }
 
-    void onDraw(double deltaTime) override
+    void onDraw(double deltaTime) override          //= Will be called in application.cpp's run which is responsible for the whole app
     {
         // Here, we just run a bunch of systems to control the world logic
         movementSystem.update(&world, (float)deltaTime);
@@ -71,8 +69,8 @@ class Playstate : public our::State
     }
 
     void onImmediateGui() override
-    { // gets called in application.cpp every frame
-        // Here, we just draw the camera controller system's gui
+    {   //= gets called in application.cpp every frame
+        //= Here, we just draw the camera controller system's gui
         ninjaSystem.imgui();
     }
 };

@@ -120,6 +120,7 @@ set(STATES_SOURCES
         source/states/material-test-state.hpp
         source/states/entity-test-state.hpp
         source/states/renderer-test-state.hpp
+        source/states/menu-state.hpp
 )
 
 # For each example, we add an executable target
