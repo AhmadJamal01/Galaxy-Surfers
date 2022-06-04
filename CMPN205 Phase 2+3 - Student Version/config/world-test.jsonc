@@ -1,0 +1,295 @@
+{
+  "start-scene": "main",
+  "window": {
+    "title": "Default Game Window",
+    "size": {
+      "width": 1280,
+      "height": 720
+    },
+    "fullscreen": false
+  },
+  "scene": {
+    "renderer": {
+      "sky": "assets/textures/sky.jpg",
+      "postprocess": "assets/shaders/postprocess/vignette.frag"
+    },
+    "assets": {
+      "shaders": {
+        "tinted": {
+          "vs": "assets/shaders/tinted.vert",
+          "fs": "assets/shaders/tinted.frag"
+        },
+        "textured": {
+          "vs": "assets/shaders/textured.vert",
+          "fs": "assets/shaders/textured.frag"
+        }
+      },
+      "textures": {
+        "moon": "assets/textures/moon.jpg",
+        "grass": "assets/textures/grass_ground_d.jpg",
+        "wood": "assets/textures/wood.jpg",
+        "glass": "assets/textures/glass-panels.png",
+        "monkey": "assets/textures/monkey.png",
+        "ninja": "assets/textures/avatar_ninja.png",
+        "train": "assets/textures/train.png"
+      },
+      "meshes": {
+        "cube": "assets/models/cube.obj",
+        "monkey": "assets/models/monkey.obj",
+        "plane": "assets/models/plane.obj",
+        "sphere": "assets/models/sphere.obj",
+        "ninja": "assets/models/Ninja.obj",
+        "train": "assets/models/train.obj"
+      },
+      "samplers": {
+        "default": {},
+        "pixelated": {
+          "MAG_FILTER": "GL_NEAREST"
+        }
+      },
+      "materials": {
+        "metal": {
+          "type": "tinted",
+          "shader": "tinted",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
+            },
+            "depthTesting": {
+              "enabled": true
+            }
+          },
+          "tint": [0.45, 0.4, 0.5, 1]
+        },
+        "glass": {
+          "type": "textured",
+          "shader": "textured",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
+            },
+            "depthTesting": {
+              "enabled": true
+            },
+            "blending": {
+              "enabled": true,
+              "sourceFactor": "GL_SRC_ALPHA",
+              "destinationFactor": "GL_ONE_MINUS_SRC_ALPHA"
+            },
+            "depthMask": false
+          },
+          "transparent": true,
+          "tint": [1, 1, 1, 1],
+          "texture": "glass",
+          "sampler": "pixelated"
+        },
+        "grass": {
+          "type": "textured",
+          "shader": "textured",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
+            },
+            "depthTesting": {
+              "enabled": true
+            }
+          },
+          "tint": [1, 1, 1, 1],
+          "texture": "grass",
+          "sampler": "default"
+        },
+        "monkey": {
+          "type": "textured",
+          "shader": "textured",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
+            },
+            "depthTesting": {
+              "enabled": true
+            }
+          },
+          "tint": [1, 1, 1, 1],
+          "texture": "monkey",
+          "sampler": "default"
+        },
+        "moon": {
+          "type": "textured",
+          "shader": "textured",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
+            },
+            "depthTesting": {
+              "enabled": true
+            }
+          },
+          "tint": [1, 1, 1, 1],
+          "texture": "moon",
+          "sampler": "default"
+        },
+        "ninja": {
+          "type": "textured",
+          "shader": "textured",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
+            },
+            "depthTesting": {
+              "enabled": true
+            }
+          },
+          "tint": [1, 1, 1, 1],
+          "texture": "ninja",
+          "sampler": "default"
+        },
+        "train": {
+          "type": "textured",
+          "shader": "textured",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
+            },
+            "depthTesting": {
+              "enabled": true
+            }
+          },
+          "tint": [1, 1, 1, 1],
+          "texture": "train",
+          "sampler": "default"
+        }
+      }
+    },
+    "world": [
+      // REMOVED THE SEPRATE CAMERA ENTITY AND MADE IT A CHILD OF THE NINJA.
+      // Added Movement Component to simulate infinite running
+      {
+        // Added an entity for the ninja in the scene with a mesh renderer component.
+        "rotation": [0, 0, 0],
+        "scale": [5, 5, 5],
+        "position": [0, 0, 0],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "ninja",
+            "material": "ninja"
+          },
+          {
+            "type": "Ninja Camera Controller", // It holds speed info about our ninja.
+            "positionSensitivity": [35.0, 35.0, 35.0]
+          },
+          {
+            "type": "Movement",
+            "linearVelocity": [0, 0, 3],
+            "angularVelocity": [0, 0, 0]
+          }
+        ],
+        "children": [
+          {
+            "position": [0, 0.18, -0.35], // setting offset to the ninja (Decied with ImGUI)
+            "rotation": [-20, 180, 0.0],
+
+            // It's a child entity of the ninja with only the camera component.
+            "components": [{ "type": "Camera" }]
+          }
+        ]
+      },
+      // Ground
+      {
+        "position": [0, -1, 0],
+        "rotation": [-90, 0, 0],
+        "scale": [10, 10, 1],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "plane",
+            "material": "grass"
+          },
+          {
+            "type": "Movement",
+            "linearVelocity": [0, 0, 3],
+            "angularVelocity": [0, 0, 0]
+          }
+        ]
+      },
+      // right lane train
+      {
+        "name": "obstacle",
+        "position": [-3, -1, 0],
+        "rotation": [0, 0, 0],
+        "scale": [0.1, 0.1, 0.1],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "train",
+            "material": "train"
+          }
+        ]
+
+        //   },
+        //   // right lane train
+        //   {
+        //     "position": [-3, -1, 15],
+        //     "rotation": [0, 0, 0],
+        //     "scale": [0.1, 0.1, 0.1],
+        //     "components": [
+        //       {
+        //         "type": "Mesh Renderer",
+        //         "mesh": "train",
+        //         "material": "train"
+        //       }
+        //     ]
+        //   },
+        //   // center lane train
+        //   {
+        //     "position": [0, -1, 5],
+        //     "rotation": [0, 0, 0],
+        //     "scale": [0.1, 0.1, 0.1],
+        //     "components": [
+        //       {
+        //         "type": "Mesh Renderer",
+        //         "mesh": "train",
+        //         "material": "train"
+        //       }
+        //     ]
+        //   },
+        //   {
+        //     "position": [0, -1, 15],
+        //     "rotation": [0, 0, 0],
+        //     "scale": [0.1, 0.1, 0.1],
+        //     "components": [
+        //       {
+        //         "type": "Mesh Renderer",
+        //         "mesh": "train",
+        //         "material": "train"
+        //       }
+        //     ]
+        //   },
+        //   // left lane train
+        //   {
+        //     "position": [3, -1, 0],
+        //     "rotation": [0, 0, 0],
+        //     "scale": [0.1, 0.1, 0.1],
+        //     "components": [
+        //       {
+        //         "type": "Mesh Renderer",
+        //         "mesh": "train",
+        //         "material": "train"
+        //       }
+        //     ]
+        //   },
+        //   {
+        //     "position": [3, -1, 15],
+        //     "rotation": [0, 0, 0],
+        //     "scale": [0.1, 0.1, 0.1],
+        //     "components": [
+        //       {
+        //         "type": "Mesh Renderer",
+        //         "mesh": "train",
+        //         "material": "train"
+        //       }
+        //     ]
+      }
+    ]
+  }
+}
