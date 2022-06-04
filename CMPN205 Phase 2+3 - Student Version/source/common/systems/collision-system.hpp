@@ -25,16 +25,9 @@ namespace our
         MeshRendererComponent *collider;
 
     public:
-        // void enter(Application *app)
-        // {
-        //     this->app = app;
-        // }
-
         // This should be called every frame to update all entities containing a NinjaControllerComponent
         void detectCollision(World *world)
         {
-            // auto &config = app->getConfig()["scene"]["world"]["components"];
-
             // test using camera and box
             for (auto entity1 : world->getEntities())
             {
@@ -43,7 +36,7 @@ namespace our
                 if (auto playerCandidate = entity1->getComponent<MeshRendererComponent>(); playerCandidate != nullptr && entity1->name == "player")
                 {
                     player = playerCandidate;
-                    // std::string name = AssetLoader<Mesh>::get(data["world"].get<std::string>());
+                    std::cout<<"Got the ship"<<'\n';
                 }
                 if (player)
                     break;
@@ -53,26 +46,25 @@ namespace our
                 // if the entity is different from the current entity
 
                 // if (auto boxCandidate = entity2->getComponent<MeshRendererComponent>(); boxCandidate != nullptr)
-                if (auto boxCandidate = entity2->getComponent<MeshRendererComponent>(); boxCandidate != nullptr)
+                if (auto boxCandidate = entity2->getComponent<MeshRendererComponent>(); boxCandidate != nullptr && entity2->name != "player")
                 {
                     collider = boxCandidate;
                     Entity *myEntity1 = player->getOwner();
                     Entity *myEntity2 = collider->getOwner();
                     std::string name = myEntity2->name;
-                    glm::vec3 minCameraVertex = glm::vec3(myEntity1->localTransform.position.x - 1,
-                                                          myEntity1->localTransform.position.y - 1,
-                                                          myEntity1->localTransform.position.z - 1);
 
-                    glm::vec3 maxCameraVertex = glm::vec3(myEntity1->localTransform.position.x + 1,
-                                                          myEntity1->localTransform.position.y + 1,
-                                                          myEntity1->localTransform.position.z + 1);
+                    glm::vec3 minCameraVertex = myEntity1->getComponent<MeshRendererComponent>()->mesh->minvertex;
+                    glm::vec3 maxCameraVertex = myEntity1->getComponent<MeshRendererComponent>()->mesh->maxvertex;
+                    minCameraVertex *= myEntity1->localTransform.scale[0];
+                    maxCameraVertex *= myEntity1->localTransform.scale[0];
+                    minCameraVertex += myEntity1->localTransform.position;
+                    maxCameraVertex += myEntity1->localTransform.position;
+
 
                     glm::vec3 minCollider = myEntity2->getComponent<MeshRendererComponent>()->mesh->minvertex;
                     glm::vec3 maxCollider = myEntity2->getComponent<MeshRendererComponent>()->mesh->maxvertex;
-
                     minCollider *= myEntity2->localTransform.scale[0];
                     maxCollider *= myEntity2->localTransform.scale[0];
-
                     minCollider += myEntity2->localTransform.position;
                     maxCollider += myEntity2->localTransform.position;
 
@@ -82,7 +74,6 @@ namespace our
                     {
                         i++;
                         std::cout << "collision detected " << name << " " << i << std::endl;
-                        // break;
                     }
                 }
             }

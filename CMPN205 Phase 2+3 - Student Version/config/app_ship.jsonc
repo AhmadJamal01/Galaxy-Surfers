@@ -94,6 +94,7 @@
                     },
                     "emissive": "moon"
                 },
+                
                 "ship":{
                     "type": "LightMaterial",
                     "shader": "lightened",
@@ -128,6 +129,7 @@
                 "rotation": [0, 0, 0],
                 "scale": [0.01, 0.01, 0.01],
                 "position": [0, 0, -10],
+                "name":"player",
                 "components": [
                     {
                         "type": "Mesh Renderer",
@@ -143,9 +145,23 @@
                     {
                         "position": [0, 110, -125],  // setting offset to the ninja (Decied with ImGUI)
                         "rotation": [-20, 180, 0.0 ],
-                        // It's a child entity of the ninja with only the camera component.
+                        // It's a child entity of the ninja with only the camera component.q
                         "components" : [
                             {"type": "Camera"}
+                        ]
+                    },
+                    {
+                        "position": [0, 0, 100],
+                        "rotation": [0, 0, 90],
+                        "components": [
+                            {
+                                "type": "Light",
+                                "kind": 2,
+                                "diffuse":[1, 1, 1],
+                                "specular":[1, 1, 1],
+                                "cone_angles":[0, 1],
+                                "attenuation":[0, 0, 0.5]
+                            }
                         ]
                     }
                 ]
@@ -155,6 +171,7 @@
                 "position": [0, 0, 0],
                 "scale": [0.01, 0.01, 0.01],
                 "rotation": [0, 0, 0],
+                "name":"Asteroid",
                 "components": [
                     {
                         "type": "Mesh Renderer",
@@ -182,22 +199,22 @@
                         "type": "Movement",
                         "angularVelocity": [0, 90, 0]
                     }
-                ],
-                "children": [
-                    {
-                        "position": [0, 0, 0],
-                        "rotation": [0, -90, 0],
-                        "components": [
-                            {
-                                "type": "Light",
-                                "kind": 1,
-                                "diffuse":[1, 1, 1],
-                                "specular":[1, 1, 1],
-                                "attenuation":[0.0005, 0,0]
-                            }
-                        ]
-                    }
-                ]
+                ]//,
+                // "children": [
+                //     {
+                //         "position": [0, 0, 0],
+                //         "rotation": [0, -90, 0],
+                //         "components": [
+                //             {
+                //                 "type": "Light",
+                //                 "kind": 1,
+                //                 "diffuse":[1, 1, 1],
+                //                 "specular":[1, 1, 1],
+                //                 "attenuation":[0.0005, 0,0]
+                //             }
+                //         ]
+                //     }
+                // ]
             }
         ]
     }
