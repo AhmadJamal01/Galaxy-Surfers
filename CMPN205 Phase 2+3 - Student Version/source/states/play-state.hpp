@@ -11,6 +11,8 @@
 
 #include <systems/collision-system.hpp>
 
+
+#include <systems/light.hpp>
 // This state shows how to use the ECS framework and deserialization.
 class Playstate : public our::State
 {
@@ -23,8 +25,8 @@ class Playstate : public our::State
 
     our::CollisionSystem collisionSystem;
 
-    void onInitialize() override
-    {
+    our::LightSystem lightSystem;
+    void onInitialize() override {
         // First of all, we get the scene configuration from the app config
         auto &config = getApp()->getConfig()["scene"];
         // If we have assets in the scene config, we deserialize them
@@ -39,7 +41,7 @@ class Playstate : public our::State
         }
         // We initialize the camera controller system since it needs a pointer to the app
         cameraController.enter(getApp());
-        ninjaSystem.enter(getApp()); // done for each system that needs app (e.g. control)
+        ninjaSystem.enter(getApp(), &renderer);               // pass the forward renderer which will be needed in the ninja
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
         renderer.initialize(size, config["renderer"]);
@@ -51,6 +53,7 @@ class Playstate : public our::State
         movementSystem.update(&world, (float)deltaTime);
         cameraController.update(&world, (float)deltaTime);
         ninjaSystem.update(&world, (float)deltaTime);
+        lightSystem.update(&world);
         // And finally we use the renderer system to draw the scene
         renderer.render(&world);
 

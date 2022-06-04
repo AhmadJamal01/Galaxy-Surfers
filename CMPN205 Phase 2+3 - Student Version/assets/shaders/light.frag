@@ -12,8 +12,8 @@ struct Light {
     vec3 direction;
     vec3 diffuse;
     vec3 specular;
-    vec3 attenuation; // x*d^2 + y*d + z
-    vec2 cone_angles; // x: inner_angle, y: outer_angle
+    vec3 attenuation;
+    vec2 cone_angles;
 };
 
 uniform Light lights[MAX_LIGHTS];
@@ -75,7 +75,7 @@ void main(){
         
         vec3 diffuse = light.diffuse * material_diffuse * max(0, dot(normal, direction_to_light));
         
-        vec3 reflected = reflect(-direction_to_light, normal);
+        vec3 reflected = normalize(reflect(-direction_to_light, normal));
         
         vec3 specular = light.specular * material_specular * pow(max(0, dot(view, reflected)), material_shininess);
 
@@ -85,7 +85,7 @@ void main(){
             attenuation /= dot(light.attenuation, vec3(d*d, d, 1));
             if(light.type == SPOT){
                 float angle = acos(dot(-direction_to_light, light.direction));
-                attenuation *= smoothstep(light.cone_angles.y, light.cone_angles.x, angle);
+                attenuation *= 1/(smoothstep(light.cone_angles.x, light.cone_angles.y, angle)+1);
             }
         }
 

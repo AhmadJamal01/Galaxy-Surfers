@@ -78,6 +78,8 @@ set(COMMON_SOURCES
         source/common/components/movement.hpp
         source/common/components/movement.cpp
         source/common/components/component-deserializer.hpp
+        source/common/components/light.hpp
+        source/common/components/light.cpp
 
         source/common/systems/forward-renderer.hpp
         source/common/systems/forward-renderer.cpp
@@ -85,6 +87,8 @@ set(COMMON_SOURCES
         source/common/systems/movement.hpp
         source/common/systems/collision-system.hpp
 
+        source/common/systems/light.hpp
+        
         source/common/components/ninja-controller-component.cpp
 
         source/common/components/collision-component.cpp

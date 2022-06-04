@@ -4,7 +4,7 @@
 #include <iostream>
 namespace our
 {
-
+    
     void ForwardRenderer::initialize(glm::ivec2 windowSize, const nlohmann::json &config)
     {
         // First, we store the window size for later use
@@ -27,11 +27,11 @@ namespace our
             //  We will draw the sphere from the inside, so what options should we pick for the face culling.
             PipelineState skyPipelineState{};
 
-            skyPipelineState.depthTesting.enabled = true;          //set depthTesting Enabled as sky would be drawn after opaque
-            skyPipelineState.depthTesting.function = GL_LEQUAL;   // LEQUAL because object would be drawn from near to far
+            skyPipelineState.depthTesting.enabled = true;       // set depthTesting Enabled as sky would be drawn after opaque
+            skyPipelineState.depthTesting.function = GL_LEQUAL; // LEQUAL because object would be drawn from near to far
 
-            skyPipelineState.faceCulling.enabled = true;          // set faceCulling Enabled so we can draw the sphere from inside
-            skyPipelineState.faceCulling.culledFace = GL_FRONT;  // culling the Front of sphere
+            skyPipelineState.faceCulling.enabled = true;        // set faceCulling Enabled so we can draw the sphere from inside
+            skyPipelineState.faceCulling.culledFace = GL_FRONT; // culling the Front of sphere
 
             // Load the sky texture (note that we don't need mipmaps since we want to avoid any unnecessary blurring while rendering the sky)
             std::string skyTextureFile = config.value<std::string>("sky", "");
@@ -90,20 +90,40 @@ namespace our
             postprocessSampler->set(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
             // Create the post processing shader
-            ShaderProgram *postprocessShader = new ShaderProgram();
-            postprocessShader->attach("assets/shaders/fullscreen.vert", GL_VERTEX_SHADER);
-            postprocessShader->attach(config.value<std::string>("postprocess", ""), GL_FRAGMENT_SHADER);
-            postprocessShader->link();
+            for (const auto& shader : config["postprocess"])       // Assume its an array of postprocessing shaders
+            {
+                ShaderProgram *postprocessShader = new ShaderProgram();
+                postprocessShader->attach("assets/shaders/fullscreen.vert", GL_VERTEX_SHADER);
+                postprocessShader->attach(shader.get<std::string>(), GL_FRAGMENT_SHADER);
+                postprocessShader->link();
+                postprocessShaders.push_back(postprocessShader);
+            }
 
-            // Create a post processing material
-            postprocessMaterial = new TexturedMaterial();
-            postprocessMaterial->shader = postprocessShader;
-            postprocessMaterial->texture = colorTarget;
-            postprocessMaterial->sampler = postprocessSampler;
-            // The default options are fine but we don't need to interact with the depth buffer
-            // so it is more performant to disable the depth mask
-            postprocessMaterial->pipelineState.depthMask = false;
+            // Create a post processing material in the temp (initially postProcessMaterial will be null and we use the normal shader)
+            // We can switch between postProcessMaterial from null to this value to see the postprocessing effect.
+            if (postprocessShaders.size() > 0)
+            {
+                postprocessMaterialTemp = new TexturedMaterial();
+                postprocessMaterialTemp->shader = postprocessShaders[0];
+                postprocessMaterialTemp->texture = colorTarget;
+                postprocessMaterialTemp->sampler = postprocessSampler;
+                // The default options are fine but we don't need to interact with the depth buffer
+                // so it is more performant to disable the depth mask
+                postprocessMaterialTemp->pipelineState.depthMask = false;
+            }
         }
+    }
+
+    // Implemented a way to toggle postprocessing
+    void ForwardRenderer::togglePostProcessing()
+    {
+        postprocessMaterial = (postprocessMaterial == nullptr) ? postprocessMaterialTemp : nullptr;
+    }
+
+    void ForwardRenderer::choosePostProcessing(int index)       // To choose the preprocessing effect
+    {
+        if (index < postprocessShaders.size())
+            postprocessMaterialTemp->shader = postprocessShaders[index];
     }
 
     void ForwardRenderer::destroy()
@@ -132,7 +152,6 @@ namespace our
 
     void ForwardRenderer::render(World *world)
     {
-
         // First of all, we search for a camera and for all the mesh renderers
         CameraComponent *camera = nullptr;
         opaqueCommands.clear();
@@ -153,12 +172,13 @@ namespace our
                 command.mesh = meshRenderer->mesh;
                 command.material = meshRenderer->material;
                 // if it is transparent, we add it to the transparent commands list
-                
+
                 if (command.material->transparent)
                 {
                     transparentCommands.push_back(command);
                 }
-                else if (command.material->affectedByLight){
+                else if (command.material->affectedByLight)
+                {
                     lightSupportCommands.push_back(command);
                 }
                 else
@@ -238,17 +258,19 @@ namespace our
             command.material->shader->set("transform", transform);
             command.mesh->draw();
         }
-        //!ADDED FOR LIGHT
+        //! ADDED FOR LIGHT
         //--------------------
+        int light_count = world->light_count;
+        Light *lights= world->lights;
         for (auto &command : lightSupportCommands)
         {
             command.material->setup();
             glm::mat4 M = command.localToWorld;
-            glm::mat4 M_IT = glm::inverse(glm::transpose(M));
+            glm::mat4 M_IT = glm::transpose(glm::inverse(M));
             glm::vec3 eye = camera->getOwner()->localTransform.position;
-            glm::vec3 sky_top= glm::vec3(0.3f, 0.6f, 1.0f);
-            glm::vec3 sky_middle= glm::vec3(0.3f, 0.3f, 0.3f);
-            glm::vec3 sky_bottom = glm::vec3( 0.1f, 0.1f, 0.0f);
+            glm::vec3 sky_top = glm::vec3(0.3f, 0.6f, 1.0f);
+            glm::vec3 sky_middle = glm::vec3(0.3f, 0.3f, 0.3f);
+            glm::vec3 sky_bottom = glm::vec3(0.1f, 0.1f, 0.0f);
             command.material->shader->set("M", M);
             command.material->shader->set("VP", VP);
             command.material->shader->set("M_IT", M_IT);
@@ -257,13 +279,16 @@ namespace our
             command.material->shader->set("sky.middle", sky_middle);
             command.material->shader->set("sky.bottom", sky_bottom);
             //light
-            command.material->shader->set("lights[0].type", 1);
-            command.material->shader->set("lights[0].position", eye);
-            command.material->shader->set("lights[0].diffuse", glm::vec3(1, 0.2, 0.1));
-            command.material->shader->set("lights[0].specular", glm::vec3(1, 0.2, 0.1));
-            command.material->shader->set("lights[0].attenuation",glm::vec3( 1, 0, 0));
-            command.material->shader->set("light_count", 1);
-
+            for (int i = 0; i < light_count; i++){
+                command.material->shader->set("lights[" + std::to_string(i) + "].type", lights[i].kind);
+                command.material->shader->set("lights[" + std::to_string(i) + "].position", lights[i].position);
+                command.material->shader->set("lights[" + std::to_string(i) + "].diffuse", lights[i].diffuse);
+                command.material->shader->set("lights[" + std::to_string(i) + "].specular", lights[i].specular);
+                command.material->shader->set("lights[" + std::to_string(i) + "].attenuation", lights[i].attenuation);
+                command.material->shader->set("lights[" + std::to_string(i) + "].direction", lights[i].direction);
+                command.material->shader->set("lights[" + std::to_string(i) + "].cone_angles", lights[i].cone_angles);
+            }
+            command.material->shader->set("light_count", light_count);
             command.mesh->draw();
         }
         //--------------------
@@ -277,7 +302,7 @@ namespace our
 
             // TODO: (Req 9) Create a model matrix for the sky such that it always follows the camera (sky sphere center = camera position)
             glm::mat4 identity(1.0f);
-            glm::mat4 M = glm::translate(identity, cameraPosition);  // translating shpere position to camera position
+            glm::mat4 M = glm::translate(identity, cameraPosition); // translating shpere position to camera position
 
             // TODO: (Req 9) We want the sky to be drawn behind everything (in NDC space, z=1)
             //  We can acheive the is by multiplying by an extra matrix after the projection but what values should we put in it?
@@ -289,7 +314,7 @@ namespace our
                 0.0f, 0.0f, 1.0f, 1.0f  // Column4      // set z=1
             );
             // TODO: (Req 9) set the "transform" uniform
-            glm::mat4 skyTransform = alwaysBehindTransform * VP * M;   //trasforming sky to depth = 1 
+            glm::mat4 skyTransform = alwaysBehindTransform * VP * M; // trasforming sky to depth = 1
             skyMaterial->shader->set("transform", skyTransform);
             // TODO: (Req 9) draw the sky sphere
             skySphere->draw();
@@ -306,7 +331,7 @@ namespace our
         // If there is a postprocess material, apply postprocessing
         if (postprocessMaterial)
         {
-            // done TODO: (Req 10) Return to the default framebuffer
+            // DONE: (Req 10) Return to the default framebuffer
             // by calling glBindFramebuffer with 0 as the target buffer
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
             // done TODO: (Req 10) Setup the postprocess material and draw the fullscreen triangle

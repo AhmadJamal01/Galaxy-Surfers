@@ -7,6 +7,7 @@
 #include "ninja-controller-component.hpp"
 #include "collision-component.hpp"
 #include "movement.hpp"
+#include "light.hpp"
 
 namespace our
 {
@@ -32,17 +33,18 @@ namespace our
         else if (type == MovementComponent::getID())
         {
             component = entity->addComponent<MovementComponent>();
+
         }
-        else if (type == NinjaControllerComponent::getID())
-        {
-            component = entity->addComponent<NinjaControllerComponent>(); // Routine
-        }
+
         else if (type == CollisionComponent::getID())
         {
-            component = entity->addComponent<CollisionComponent>();
+            component = entity->addComponent<CollisionComponent>();    
+        } else if (type == NinjaControllerComponent::getID() ){
+            component = entity->addComponent<NinjaControllerComponent>();       // Routine
+        } else if (type == LightComponent::getID()) {
+            component = entity->addComponent<LightComponent>();
         }
-        if (component)
-            component->deserialize(data);
+        if(component) component->deserialize(data);
     }
 
 }
