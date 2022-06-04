@@ -241,7 +241,7 @@ int our::Application::run(int run_for_frames) {
     double last_frame_time = glfwGetTime();
     int current_frame = 0;
 
-    //Game loop
+    //= Render loop
     while(!glfwWindowShouldClose(window)){
         if(run_for_frames != 0 && current_frame >= run_for_frames) break;
         glfwPollEvents(); // Read all the user events and call relevant callbacks.
@@ -251,6 +251,7 @@ int our::Application::run(int run_for_frames) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        //= run needed immediate GUI
         if(currentState) currentState->onImmediateGui(); // Call to run any required Immediate GUI.
 
         // If ImGui is using the mouse or keyboard, then we don't want the captured events to affect our keyboard and mouse objects.
@@ -258,7 +259,7 @@ int our::Application::run(int run_for_frames) {
         keyboard.setEnabled(!io.WantCaptureKeyboard, window);
         mouse.setEnabled(!io.WantCaptureMouse, window);
 
-        // Render the ImGui commands we called (this doesn't actually draw to the screen yet.
+        //Render the ImGui commands we called (this doesn't actually draw to the screen yet.
         ImGui::Render();
 
         // Just in case ImGui changed the OpenGL viewport (the portion of the window to which we render the geometry),

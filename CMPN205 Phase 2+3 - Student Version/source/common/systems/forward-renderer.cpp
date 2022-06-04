@@ -89,22 +89,22 @@ namespace our
             postprocessSampler->set(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             postprocessSampler->set(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-            // Create the post processing shader
+            //= Create the post processing shaders for each effect in postprocess
             for (const auto &shader : config["postprocess"]) // Assume its an array of postprocessing shaders
             {
                 ShaderProgram *postprocessShader = new ShaderProgram();
                 postprocessShader->attach("assets/shaders/fullscreen.vert", GL_VERTEX_SHADER);
                 postprocessShader->attach(shader.get<std::string>(), GL_FRAGMENT_SHADER);
                 postprocessShader->link();
-                postprocessShaders.push_back(postprocessShader);
+                postprocessShaders.push_back(postprocessShader);    //= push into vector of postprocessing shaders
             }
 
-            // Create a post processing material in the temp (initially postProcessMaterial will be null and we use the normal shader)
-            // We can switch between postProcessMaterial from null to this value to see the postprocessing effect.
+            //= Initially postProcessMaterial will be null and we use the normal shader.
+            //= Whenever we need, we can switch between postProcessMaterial from null to this value to see the postprocessing effect.
             if (postprocessShaders.size() > 0)
             {
                 postprocessMaterialTemp = new TexturedMaterial();
-                postprocessMaterialTemp->shader = postprocessShaders[0];
+                postprocessMaterialTemp->shader = postprocessShaders[0];        //= Default effect is cartoonize
                 postprocessMaterialTemp->texture = colorTarget;
                 postprocessMaterialTemp->sampler = postprocessSampler;
                 // The default options are fine but we don't need to interact with the depth buffer
@@ -114,13 +114,13 @@ namespace our
         }
     }
 
-    // Implemented a way to toggle postprocessing
+    //= Implemented a way to toggle postprocessing (will be called upon key press in the ninja system)
     void ForwardRenderer::togglePostProcessing()
     {
         postprocessMaterial = (postprocessMaterial == nullptr) ? postprocessMaterialTemp : nullptr;
     }
 
-    void ForwardRenderer::choosePostProcessing(int index) // To choose the preprocessing effect
+    void ForwardRenderer::choosePostProcessing(int index) //= To choose the preprocessing effect (also used in ninja system upon key press)
     {
         if (index < postprocessShaders.size())
             postprocessMaterialTemp->shader = postprocessShaders[index];

@@ -126,7 +126,7 @@
       {
         "rotation": [0, 0, 0],
         "scale": [0.01, 0.01, 0.01],
-        "position": [0, 0, -10],
+        "position": [0, 0, 0],
         "name": "player",
         "components": [
           {
@@ -135,20 +135,20 @@
             "material": "ship"
           },
           {
-            "type": "Ninja Camera Controller", // It holds speed info about our ninja.
+            "type": "Ninja Camera Controller", // It holds speed info about our ship.
             "positionSensitivity": [3000.0, 350.0, 350.0]
           },
           {
-            "type": "Movement",
+            "type": "Movement",                       // Any entity holding this componenet will spontaneously move with the velocities below (Asteroids are static).
             "linearVelocity": [0, 0, 3],
             "angularVelocity": [0, 0, 0]
           }
         ],
         "children": [
           {
-            "position": [0, 110, -125], // setting offset to the ninja (Decied with ImGUI)
+            "position": [0, 110, -125],       // setting offset to the ship (Decied with ImGUI)
             "rotation": [-20, 180, 0.0],
-            // It's a child entity of the ninja with only the camera component.q
+            // It's a child entity of the ship with only the camera component.
             "components": [{ "type": "Camera" }]
           },
           {
