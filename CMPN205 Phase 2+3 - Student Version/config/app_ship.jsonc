@@ -281,6 +281,7 @@
           },
           {
             "type": "Movement",
+            "linearVelocity": [0, 0, 3],
             "angularVelocity": [0, 90, 0]
           }
         ],
