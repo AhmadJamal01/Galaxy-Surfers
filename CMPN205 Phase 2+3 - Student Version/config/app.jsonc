@@ -199,6 +199,7 @@
                 ],
                 "children": [
                     {
+                        "name":"player",
                         "position": [0, -0.6, -1],
                         "rotation": [0, 0, 0],
                         "scale": [0.01, 0.01, -0.01],
@@ -227,6 +228,7 @@
                 ]
             },
             {
+                "name":"monkey",
                 "rotation": [-45, 0, 0],
                 "components": [
                     {

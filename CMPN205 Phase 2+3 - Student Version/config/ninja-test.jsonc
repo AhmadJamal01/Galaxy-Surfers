@@ -158,6 +158,7 @@
             // REMOVED THE SEPRATE CAMERA ENTITY AND MADE IT A CHILD OF THE NINJA.
 
             {// Added an entity for the ninja in the scene with a mesh renderer component.
+                "name":"player",
                 "rotation": [0, 0, 0],
                 "scale": [5, 5, 5],
                 "position": [0, 0, -4],
@@ -188,6 +189,7 @@
             },
 
             {
+                "name":"monkey",
                 "rotation": [-45, 0, 0],
                 "components": [
                     {
