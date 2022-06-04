@@ -10,7 +10,7 @@
   },
   "scene": {
     "renderer": {
-      "sky": "assets/textures/galaxy.jpg",
+      "sky": "assets/textures/meh.jpeg",
       "postprocess": [
         "assets/shaders/postprocess/cartoonize.frag",
         "assets/shaders/postprocess/chromatic-aberration.frag",
