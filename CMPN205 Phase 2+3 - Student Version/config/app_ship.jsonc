@@ -152,19 +152,52 @@
             "components": [{ "type": "Camera" }]
           },
           {
-            "position": [0, 0, 100],
-            "rotation": [0, 0, 90],
+            "scale": [100, 100, 100],
+            "position": [0, 0, 1],
+            "rotation": [0, 0, -90],
             "components": [
               {
                 "type": "Light",
                 "kind": 2,
                 "diffuse": [1, 1, 1],
                 "specular": [1, 1, 1],
-                "cone_angles": [0, 1],
-                "attenuation": [0, 0, 0.5]
+                "cone_angles": [0, 5],
+                "attenuation": [0.1, 0, 0.4]
+              }
+            ]
+          },
+          //!moon
+      {
+        "position": [0, 1400, -700],
+        "scale": [500, 500, 500],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "sphere",
+            "material": "shiny_moon"
+          },
+          {
+            "type": "Movement",
+            "linearVelocity": [0, 0, 3],
+            "angularVelocity": [0, 90, 0]
+          }
+        ],
+        "children": [
+          {
+            "position": [0, 0, 0],
+            "components": [
+              {
+                "type": "Light",
+                "kind": 1,
+                "diffuse": [1, 1, 1],
+                "specular": [1, 1, 1],
+                "cone_angles": [0, 5],
+                "attenuation": [0.0025, 0, 0]
               }
             ]
           }
+        ]
+      }
         ]
       },
       //!asteroid
@@ -278,24 +311,6 @@
             "type": "Movement",
             "linearVelocity": [0, 0, 0],
             "angularVelocity": [0, 30, 70]
-          }
-        ]
-      },
-      //!moon
-      {
-        "position": [0, 30, 0],
-        "rotation": [45, 45, 0],
-        "scale": [5, 5, 5],
-        "components": [
-          {
-            "type": "Mesh Renderer",
-            "mesh": "sphere",
-            "material": "shiny_moon"
-          },
-          {
-            "type": "Movement",
-            "linearVelocity": [0, 0, 3],
-            "angularVelocity": [0, 90, 0]
           }
         ]
       }
