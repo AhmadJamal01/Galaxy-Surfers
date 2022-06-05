@@ -22,7 +22,7 @@ namespace our
         CameraComponent * playerCamera;           //=We need external acess to the camera component of the player for ImGUI
         NinjaControllerComponent *controller;         //= For control of player and IMGui
         ForwardRenderer * postprocessControl;    //=to use the togglePostProcessing function implemented in the forward renderer (will be set upon enter).
-        enum PostprocessingEffect {cartoonize, chromatic_aberration, convolution, fisheye, grayscale, radial_blur, vignette};
+        enum PostprocessingEffect {def, cartoonize, chromatic_aberration, convolution, fisheye, grayscale, radial_blur, vignette};
         int index;      //= to rotate postprocessing effects with each press of p (changePostProcessingFunction).
 
     public:
@@ -71,23 +71,29 @@ namespace our
             //if(app->getKeyboard().isPressed(GLFW_KEY_Q)) position += up * (deltaTime * speed.y);
             //if(app->getKeyboard().isPressed(GLFW_KEY_E)) position -= up * (deltaTime * speed.y);
             if(app->getKeyboard().justPressed(GLFW_KEY_P)) {
-            postprocessControl->togglePostProcessing();
+            // Cycle through postprocessing effects    
             postprocessControl->choosePostProcessing((++index) % 7);
             }
 
-            if(app->getKeyboard().justPressed(GLFW_KEY_F)) {
-            postprocessControl->togglePostProcessing();
-            }
+
             // S & W moves the player back and forth
             //! Ninja Controls.
             if(app->getKeyboard().isPressed(GLFW_KEY_W)) 
             {
                 position -= front * (deltaTime * speed.z );
                 playerCamera->getOwner()->localTransform.position.z = -155.0f;
+                if(app->getKeyboard().justPressed(GLFW_KEY_W)) {
+                    postprocessControl->choosePostProcessing(radial_blur);
+                }
+                
             }
             else{
+                 if(app->getKeyboard().justReleased(GLFW_KEY_W)) {
+                    postprocessControl->choosePostProcessing(def);
+                }
                 playerCamera->getOwner()->localTransform.position.z = -125.0f;
             }
+
             
 
 
@@ -129,6 +135,8 @@ namespace our
                 ImGui::DragFloat3("Camera position", &playerCamera->getOwner()->localTransform.position.x, -2.0f, 2.0f);
                 ImGui::DragFloat3("Camera rotation", &playerCamera->getOwner()->localTransform.rotation.x, -20.0f, 20.0f);
                 ImGui::DragFloat3("Player position", &controller->getOwner()->localTransform.position.x, -2.0f, 2.0f);
+                ImGui::DragFloat3("Player scale", &controller->getOwner()->localTransform.scale.x, -2.0f, 2.0f);
+
             ImGui::End();
             }
         }

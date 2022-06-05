@@ -18,7 +18,7 @@ void main() {
 
     float kernel[9] = float[](              // Sharpening filter with some dimming (-0.3)
         0, -1, 0,
-        -1,  5, -1,
+        -1,  7, -1,
         0, -1, -0.3
     );
 
@@ -32,7 +32,7 @@ void main() {
 
     frag_color = vec4(frag_color.r,frag_color.g, frag_color.b, 1);      
 
-    frag_color = vec4(1.0 - frag_color.r,frag_color.g, frag_color.b, 1);        // Would you like an inverted red channel?
+    frag_color = vec4( frag_color.r,frag_color.g, frag_color.b, 1);        // Would you like an inverted red channel?
 
 
 }

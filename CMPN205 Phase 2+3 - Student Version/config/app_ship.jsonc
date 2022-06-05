@@ -12,6 +12,7 @@
     "renderer": {
       "sky": "assets/textures/meh.jpeg",
       "postprocess": [
+        "assets/shaders/postprocess/default.frag",
         "assets/shaders/postprocess/cartoonize.frag",
         "assets/shaders/postprocess/chromatic-aberration.frag",
         "assets/shaders/postprocess/convolution.frag",

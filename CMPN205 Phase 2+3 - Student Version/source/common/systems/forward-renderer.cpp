@@ -103,27 +103,22 @@ namespace our
             //= Whenever we need, we can switch between postProcessMaterial from null to this value to see the postprocessing effect.
             if (postprocessShaders.size() > 0)
             {
-                postprocessMaterialTemp = new TexturedMaterial();
-                postprocessMaterialTemp->shader = postprocessShaders[0];        //= Default effect is cartoonize
-                postprocessMaterialTemp->texture = colorTarget;
-                postprocessMaterialTemp->sampler = postprocessSampler;
+                postprocessMaterial = new TexturedMaterial();
+                postprocessMaterial->shader = postprocessShaders[0];        //= the default postprocessing effect does nothing.
+                postprocessMaterial->texture = colorTarget;
+                postprocessMaterial->sampler = postprocessSampler;
                 // The default options are fine but we don't need to interact with the depth buffer
                 // so it is more performant to disable the depth mask
-                postprocessMaterialTemp->pipelineState.depthMask = false;
+                postprocessMaterial->pipelineState.depthMask = false;
             }
         }
     }
 
-    //= Implemented a way to toggle postprocessing (will be called upon key press in the ninja system)
-    void ForwardRenderer::togglePostProcessing()
-    {
-        postprocessMaterial = (postprocessMaterial == nullptr) ? postprocessMaterialTemp : nullptr;
-    }
 
     void ForwardRenderer::choosePostProcessing(int index) //= To choose the preprocessing effect (also used in ninja system upon key press)
     {
         if (index < postprocessShaders.size())
-            postprocessMaterialTemp->shader = postprocessShaders[index];
+            postprocessMaterial->shader = postprocessShaders[index];
     }
 
     void ForwardRenderer::destroy()
