@@ -31,6 +31,7 @@ namespace our
         float start_time;
         int score;
         int extra_score;
+        int lives = 3;
     public:
         // When a state enters, it should call this function and give it the pointer to the application
         void enter(Application* app, ForwardRenderer * FR){  //= This and the ninja's update function will be invoked in playe-state  (initialize and ondraw)   
@@ -163,9 +164,12 @@ namespace our
                 // Set imgui window position to top right
                 ImGui::SetWindowPos(ImVec2(1100, 0));            // Will be back.
                 std::string player_score = "score: " + std::to_string(this->score);
+                std::string hearts = (this->lives == 3)? "Lives: ♥ ♥ ♥ " : (this->lives == 2)? "Lives: ♥ ♥ " : "Lives: ♥ ";
                 ImGui::SetWindowFontScale(2.5f); 
                 ImGui::TextUnformatted(player_score.c_str());
+                ImGui::TextUnformatted(hearts.c_str());
                 ImGui::End();
+                
             }
         }
     };
