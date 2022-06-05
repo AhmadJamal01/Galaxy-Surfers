@@ -21,7 +21,7 @@ class Playstate : public our::State
     our::NinjaSystem ninjaSystem; //= will need its update function for each draw (control the ninja).
     our::MovementSystem movementSystem;
 
-    our::CollisionSystem collisionSystem;
+    // our::CollisionSystem collisionSystem;
 
     our::LightSystem lightSystem;
     void onInitialize() override {
@@ -55,7 +55,7 @@ class Playstate : public our::State
         // And finally we use the renderer system to draw the scene
         renderer.render(&world);
 
-        collisionSystem.detectCollision(&world);
+        // collisionSystem.detectCollision(&world);
     }
 
     void onDestroy() override

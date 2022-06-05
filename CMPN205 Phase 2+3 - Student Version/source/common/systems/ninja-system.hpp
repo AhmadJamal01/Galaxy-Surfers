@@ -15,6 +15,8 @@
 #include <string>  
 // include glfw
 
+#include "./collision-system.hpp"
+
 namespace our
 {   //= similar to free-camera-controller.
     //= The ninja-system is responsible for moving every entity which contains a NinjaControllerComponent.
@@ -32,6 +34,8 @@ namespace our
         int score;
         int extra_score;
         int lives = 3;
+
+        our::CollisionSystem collisionSystem;
     public:
         // When a state enters, it should call this function and give it the pointer to the application
         void enter(Application* app, ForwardRenderer * FR){  //= This and the ninja's update function will be invoked in playe-state  (initialize and ondraw)   
@@ -134,6 +138,16 @@ namespace our
                 //}
             }
             // note that the previous four directions are reversed because by default the camera is rotated to look from behind the ninja.
+        
+            if(collisionSystem.detectCollision(world)){
+                position += front * (deltaTime * speed.z)*200.0f;
+                postprocessControl->choosePostProcessing(chromatic_aberration);                
+                lives--;
+                if(lives<=0){
+                    std::cout << "You Lose" << std::endl;
+                }
+                std::cout << "Lives: " << lives << std::endl;
+            }
         }
 
         // When the state exits, it should call this function to ensure the mouse is unlocked
