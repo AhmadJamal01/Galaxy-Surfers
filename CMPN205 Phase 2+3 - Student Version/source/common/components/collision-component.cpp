@@ -7,13 +7,15 @@
 
 namespace our
 {
+    // reads the mesh from the json object and populates the min and max vertices
     void CollisionComponent::deserialize(const nlohmann::json &data)
     {
         if (!data.is_object())
             return;
-        // mesh = AssetLoader<Mesh>::get(data["mesh"].get<std::string>());
-        minCollider = data.value("minCollider", minCollider);
-        maxCollider = data.value("maxCollider", maxCollider);
+        mesh = AssetLoader<Mesh>::get(data["mesh"].get<std::string>());
+
+        minCollider = mesh->minvertex;
+        maxCollider = mesh->maxvertex;
     }
 
 }

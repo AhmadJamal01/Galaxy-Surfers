@@ -68,6 +68,7 @@ namespace our
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementCount * sizeof(unsigned int), elements.data(), GL_STATIC_DRAW);
 
+            // finding the min and max vertices to be used in collision detection
             for (auto vertex : vertices)
             {
                 if (vertex.position.x < minvertex.x)

@@ -13,9 +13,7 @@ namespace our
     class CollisionComponent : public Component
     {
     public:
-        // Mesh *mesh; // The mesh that should be drawn
-        // glm::vec3 boundingBox[8] = {glm::vec3(0.0, 0.0, 0.0)}; // Each entity has a bounding box that defines its collision volume.
-        //? not needed
+        Mesh *mesh;                                 // keeps track of the mesh to retrueve the min and max vertices
         glm::vec3 minCollider = {0.0f, 0.0f, 0.0f}; // The minimum coordinates of the bounding box
         glm::vec3 maxCollider = {0.0f, 0.0f, 0.0f}; // The maximum coordinates of the bounding box
 
@@ -24,9 +22,6 @@ namespace our
 
         // Reads minCollider & maxCollider from the given json object
         void deserialize(const nlohmann::json &data) override;
-
-        // should be in the system?
-        // bool detetcCollision(Entity *other);
     };
 
 }
