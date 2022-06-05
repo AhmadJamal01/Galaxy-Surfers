@@ -12,6 +12,9 @@
 #include <glm/gtx/fast_trigonometry.hpp>
 
 #include <iostream>
+#include <string>  
+// include glfw
+
 namespace our
 {   //= similar to free-camera-controller.
     //= The ninja-system is responsible for moving every entity which contains a NinjaControllerComponent.
@@ -24,18 +27,27 @@ namespace our
         ForwardRenderer * postprocessControl;    //=to use the togglePostProcessing function implemented in the forward renderer (will be set upon enter).
         enum PostprocessingEffect {def, cartoonize, chromatic_aberration, convolution, fisheye, grayscale, radial_blur, vignette};
         int index;      //= to rotate postprocessing effects with each press of p (changePostProcessingFunction).
-
+        float curr_time;
+        float start_time;
+        int score;
+        int extra_score;
     public:
         // When a state enters, it should call this function and give it the pointer to the application
         void enter(Application* app, ForwardRenderer * FR){  //= This and the ninja's update function will be invoked in playe-state  (initialize and ondraw)   
             this->app = app;
             this->postprocessControl = FR;                  //=to set postprocessControl as well.
+            this->start_time = (float)glfwGetTime();
+            this->curr_time = (float)glfwGetTime() - start_time;
+            this->extra_score= 0;
         }
 
         // This should be called every frame to update all entities containing a NinjaControllerComponent
         void update(World* world, float deltaTime) {
             // First of all, we search for an entity containing both a CameraComponent and a NinjaControllerComponent
             // As soon as we find one, we break
+            curr_time = (float)glfwGetTime() - start_time;
+            score = static_cast<int>(curr_time) + extra_score;
+
             for(auto entity : world->getEntities()){
                  //= Look for the NinjaControllerComponent (has speed data so far)
                  //= and the camera component (in the camera entity). Note that even the nested camera entity will be looped on (2nd if condition)
@@ -80,6 +92,7 @@ namespace our
             //! Ninja Controls.
             if(app->getKeyboard().isPressed(GLFW_KEY_W)) 
             {
+                this->extra_score += 1;
                 position -= front * (deltaTime * speed.z );
                 playerCamera->getOwner()->localTransform.position.z = -155.0f;
                 if(app->getKeyboard().justPressed(GLFW_KEY_W)) {
@@ -131,13 +144,22 @@ namespace our
         }
 
         void imgui(){           //= Will be called every frame in application.cpp to provide a slider for camera position and rotation (use camera component to get its own entity = camera)
-            if(playerCamera && ImGui::Begin("Ninja")){      // playerCamera is initially null (else get a segmentationf fault)
-                ImGui::DragFloat3("Camera position", &playerCamera->getOwner()->localTransform.position.x, -2.0f, 2.0f);
-                ImGui::DragFloat3("Camera rotation", &playerCamera->getOwner()->localTransform.rotation.x, -20.0f, 20.0f);
-                ImGui::DragFloat3("Player position", &controller->getOwner()->localTransform.position.x, -2.0f, 2.0f);
-                ImGui::DragFloat3("Player scale", &controller->getOwner()->localTransform.scale.x, -2.0f, 2.0f);
-
-            ImGui::End();
+            ImGuiWindowFlags window_flags = 0;
+            window_flags |= ImGuiWindowFlags_NoBackground;
+            window_flags |= ImGuiWindowFlags_NoTitleBar;
+            // etc.
+            bool * open_ptr = (bool*) true;
+            if(playerCamera && ImGui::Begin("Ninja", open_ptr, window_flags)){      // playerCamera is initially null (else get a segmentationf fault)
+                //ImGui::DragFloat3("Camera position", &playerCamera->getOwner()->localTransform.position.x, -2.0f, 2.0f);
+                //ImGui::DragFloat3("Camera rotation", &playerCamera->getOwner()->localTransform.rotation.x, -20.0f, 20.0f);
+                //ImGui::DragFloat3("Player position", &controller->getOwner()->localTransform.position.x, -2.0f, 2.0f);
+                //ImGui::DragFloat3("Player scale", &controller->getOwner()->localTransform.scale.x, -2.0f, 2.0f);
+                // Set imgui window position to top right
+                ImGui::SetWindowPos(ImVec2(1100, 0));            // Will be back.
+                std::string player_score = "score: " + std::to_string(this->score);
+                ImGui::SetWindowFontScale(2.5f); 
+                ImGui::TextUnformatted(player_score.c_str());
+                ImGui::End();
             }
         }
     };
