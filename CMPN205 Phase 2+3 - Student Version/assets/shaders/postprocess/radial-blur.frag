@@ -10,7 +10,7 @@ out vec4 frag_color;
 // The number of samples we read to compute the blurring effect
 #define STEPS 16
 // The strength of the blurring effect
-#define STRENGTH 0.2
+#define STRENGTH 0.05
 
 void main(){
     frag_color = vec4(0.0 ,0.0, 0.0, 1.0);
