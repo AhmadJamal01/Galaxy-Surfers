@@ -56,37 +56,29 @@ namespace our
                     std::string name = myEntity2->name;
 
                     // gets the min and max vertices using the mesh class
-                    glm::vec3 minCameraVertex = myEntity1->getComponent<CollisionComponent>()->mesh->minvertex;
-                    glm::vec3 maxCameraVertex = myEntity1->getComponent<CollisionComponent>()->mesh->maxvertex;
-                    // glm::vec4 minCameraVertex = glm::vec4(myEntity2->getComponent<CollisionComponent>()->mesh->minvertex, 1);
-                    // glm::vec4 maxCameraVertex = glm::vec4(myEntity2->getComponent<CollisionComponent>()->mesh->maxvertex, 1);
+                    glm::vec3 minPlayerVertex = myEntity1->getComponent<CollisionComponent>()->mesh->minvertex;
+                    glm::vec3 maxPlayerVertex = myEntity1->getComponent<CollisionComponent>()->mesh->maxvertex;
 
                     // transforms the min and max vertices to the wold space
-                    minCameraVertex *= myEntity1->localTransform.scale[0];
-                    maxCameraVertex *= myEntity1->localTransform.scale[0];
-                    minCameraVertex += myEntity1->localTransform.position;
-                    maxCameraVertex += myEntity1->localTransform.position;
-                    // minCameraVertex = myEntity2->getLocalToWorldMatrix() * minCameraVertex;
-                    // maxCameraVertex = myEntity2->getLocalToWorldMatrix() * maxCameraVertex;
+                    minPlayerVertex *= myEntity1->localTransform.scale[0];
+                    maxPlayerVertex *= myEntity1->localTransform.scale[0];
+                    minPlayerVertex += myEntity1->localTransform.position;
+                    maxPlayerVertex += myEntity1->localTransform.position;
 
                     // gets the min and max vertices using the mesh class
                     glm::vec3 minCollider = myEntity2->getComponent<CollisionComponent>()->mesh->minvertex;
                     glm::vec3 maxCollider = myEntity2->getComponent<CollisionComponent>()->mesh->maxvertex;
-                    // glm::vec4 minCollider = glm::vec4(myEntity2->getComponent<CollisionComponent>()->mesh->minvertex, 1);
-                    // glm::vec4 maxCollider = glm::vec4(myEntity2->getComponent<CollisionComponent>()->mesh->maxvertex, 1);
 
                     // transforms the min and max vertices to the wold space
                     minCollider *= myEntity2->localTransform.scale[0];
                     maxCollider *= myEntity2->localTransform.scale[0];
                     minCollider += myEntity2->localTransform.position;
                     maxCollider += myEntity2->localTransform.position;
-                    // minCollider = myEntity2->getLocalToWorldMatrix() * minCollider;
-                    // maxCollider = myEntity2->getLocalToWorldMatrix() * maxCollider;
 
                     // collision between AABBs check
-                    if ((minCameraVertex.x <= maxCollider.x && maxCameraVertex.x >= minCollider.x) &&
-                        (minCameraVertex.y <= maxCollider.y && maxCameraVertex.y >= minCollider.y) &&
-                        (minCameraVertex.z <= maxCollider.z && maxCameraVertex.z >= minCollider.z))
+                    if ((minPlayerVertex.x <= maxCollider.x && maxPlayerVertex.x >= minCollider.x) &&
+                        (minPlayerVertex.y <= maxCollider.y && maxPlayerVertex.y >= minCollider.y) &&
+                        (minPlayerVertex.z <= maxCollider.z && maxPlayerVertex.z >= minCollider.z))
                     {
                         // i++;
                         // std::cout << "collision detected with " << name << " " << i << std::endl;

@@ -12,11 +12,13 @@
 
 #include <flags/flags.h>
 
+#ifdef _WIN32
 #include<windows.h>
 #include <Mmsystem.h>
 #include <mciapi.h>
 //these two headers are already included in the <Windows.h> header
 #pragma comment(lib, "Winmm.lib")
+#endif
 
 // Include the Dear ImGui implementation headers
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD2
@@ -155,9 +157,10 @@ our::WindowConfiguration our::Application::getWindowConfiguration() {
 // run_for_frames decides how many frames should be run before the application automatically closes.
 // if run_for_frames == 0, the application runs indefinitely till manually closed.
 int our::Application::run(int run_for_frames) {
+    #ifdef _WIN32
     mciSendString("open \"assets/audio/breakout.mp3\" type mpegvideo alias mp3", NULL, 0, NULL);
     mciSendString("play mp3 repeat", NULL, 0, NULL);
-
+    #endif
     // Set the function to call when an error occurs.
     glfwSetErrorCallback(glfw_error_callback);
 
