@@ -10,16 +10,18 @@
 #include <asset-loader.hpp>
 #include <systems/ninja-system.hpp>
 #include <systems/light.hpp>
+
 // This state shows how to use the ECS framework and deserialization.
-class MenuState : public our::State
-{
+class MenuState: public our::State {
+    bool fontLoaded = false;
 
-    void onInitialize() override
-    {
-        // Theme Source: https://github.com/ocornut/imgui/issues/707
-        auto &io = ImGui::GetIO();
-        io.Fonts->AddFontFromFileTTF("assets/Fonts/Ruda-Bold.ttf", 15.0f);
-
+    void onInitialize() override {
+    // Theme Source: https://github.com/ocornut/imgui/issues/707
+    if(!fontLoaded) {
+        ImGui::GetIO().Fonts->AddFontFromFileTTF("assets/Fonts/Ruda-Bold.ttf", 14.0f);
+        ImGui::GetIO().Fonts->Build();
+        fontLoaded = true;
+    }
         auto &style = ImGui::GetStyle();
         style.FrameRounding = 4.0f;
         style.WindowBorderSize = 0.0f;
@@ -69,7 +71,6 @@ class MenuState : public our::State
 
     void onImmediateGui() override
     {
-
         ImGui::Begin("Welcome to Galaxy Surfers");
         ImGui::SetWindowSize(ImVec2((float)500, (float)400));
         ImGui::SetWindowFontScale(1.5f);

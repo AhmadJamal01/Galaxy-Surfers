@@ -17,6 +17,8 @@
 
 #include "./collision-system.hpp"
 
+
+
 namespace our
 { //= similar to free-camera-controller.
     //= The ninja-system is responsible for moving every entity which contains a NinjaControllerComponent.
@@ -141,17 +143,17 @@ namespace our
                 playerCamera->getOwner()->localTransform.position.z = -125.0f;
             }
 
-            // A & D moves the player left or right
-            // Fixed points
-            entity->localTransform.rotation.z *= 0.9;
-            entity->localTransform.rotation.y *= 0.1;
-            entity->localTransform.rotation.x *= 0.1;
-            entity->localTransform.position.y *= 0.1;
-            if (app->getKeyboard().isPressed(GLFW_KEY_D))
-            {
-                if (entity->localTransform.position.x > -4.0f)
-                {
-                    position -= right * (deltaTime * speed.x * 0.3f);
+
+            // A & D moves the player left or right 
+            //Fixed points
+            entity->localTransform.rotation.z*=0.9;
+            entity->localTransform.rotation.y*=0.1;
+            entity->localTransform.rotation.x*=0.1;
+            entity->localTransform.position.y*=0.1;
+            if(app->getKeyboard().isPressed(GLFW_KEY_D)) 
+            {   
+                if( entity->localTransform.position.x > -4.0f){
+                position -= right * (deltaTime * speed.x * 0.3f);
                 }
                 entity->localTransform.rotation.z += 0.01;
                 // if( entity->localTransform.rotation.z > glm::radians(-5.0f)){
@@ -180,14 +182,15 @@ namespace our
                 postprocessControl->setPostProcessing(chromatic_aberration);
                 lives--;
                 slow_down_effect = 0.09f;
-                // if(lives == 0){
-                //     state-> getApp()->changeState("menu-state");
-                // }
+
             }
             else if (collidedWith && collidedWith->name == "bonus")
             {
                 collidedWith->visible = false;
                 extra_score += (collidedWith->getComponent<CollisionComponent>()->bonus);
+                collision_time = (float)glfwGetTime();
+                postprocessControl->setPostProcessing(convolution);
+
             }
 
             if ((float)glfwGetTime() - collision_time > exhaustion_time)
@@ -199,6 +202,21 @@ namespace our
             {
                 position += front * (deltaTime * speed.z) * (1.0f - slow_down_effect); // like multiplying the forward speed by slow_down_effect
             }
+
+             if(lives == 0){
+                    state-> getApp()->changeState("endgame-state");
+                    std::ifstream ifs("source/states/endgame.jsonc");
+                    auto json = nlohmann::json::parse(ifs);
+                    ifs.close();
+                    int highScore = json.value("highScore", 0);
+
+                    if (score > highScore)  highScore = score;  // Compare json highscore with current score
+
+                    std::ofstream ofs("source/states/endgame.jsonc");
+                    nlohmann::json j = {{"highScore", highScore}, {"score", score}};
+                    ofs << j;
+                    ofs.close();
+                }
         }
 
         // When the state exits, it should call this function to ensure the mouse is unlocked

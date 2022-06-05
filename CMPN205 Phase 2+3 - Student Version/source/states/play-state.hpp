@@ -42,7 +42,7 @@ class Playstate : public our::State
         }
         // We initialize the camera controller system since it needs a pointer to the app
         cameraController.enter(getApp());
-        ninjaSystem.enter(getApp(), &renderer, &state); // pass the forward renderer which will be needed in the ninja
+        ninjaSystem.enter(getApp(), &renderer, this);         // pass the forward renderer which will be needed in the ninja. this = play_state (can switch from any state to another)
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
         spawningController.initialize(size);
@@ -63,6 +63,7 @@ class Playstate : public our::State
         // collisionSystem.detectCollision(&world);
     }
 
+
     void onDestroy() override
     {
         // Don't forget to destroy the renderer
@@ -71,6 +72,8 @@ class Playstate : public our::State
         cameraController.exit();
         // and we delete all the loaded assets to free memory on the RAM and the VRAM
         our::clearAllAssets();
+        // clear world
+        world.clear();
     }
 
     void onImmediateGui() override
