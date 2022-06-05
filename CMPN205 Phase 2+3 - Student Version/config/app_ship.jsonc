@@ -143,6 +143,10 @@
             "type": "Movement",                       // Any entity holding this componenet will spontaneously move with the velocities below (Asteroids are static).
             "linearVelocity": [0, 0, 3],
             "angularVelocity": [0, 0, 0]
+          },
+          {
+              "type": "Collision",
+              "mesh": "ship"
           }
         ],
         "children": [
@@ -217,6 +221,10 @@
             "type": "Movement",
             "linearVelocity": [0, 0, 0],
             "angularVelocity": [0, 30, 70]
+          },
+          {
+              "type": "Collision",
+              "mesh": "asteroid"
           }
         ]
       },
@@ -236,6 +244,10 @@
             "type": "Movement",
             "linearVelocity": [0, 0, 0],
             "angularVelocity": [0, 30, 70]
+          },
+          {
+              "type": "Collision",
+              "mesh": "asteroid"
           }
         ]
       },
@@ -255,6 +267,10 @@
             "type": "Movement",
             "linearVelocity": [0, 0, 0],
             "angularVelocity": [0, 30, 70]
+          },
+          {
+              "type": "Collision",
+              "mesh": "asteroid"
           }
         ]
       },
@@ -274,6 +290,10 @@
             "type": "Movement",
             "linearVelocity": [0, 0, 0],
             "angularVelocity": [0, 30, 70]
+          },
+          {
+              "type": "Collision",
+              "mesh": "asteroid"
           }
         ]
       },
@@ -293,6 +313,10 @@
             "type": "Movement",
             "linearVelocity": [0, 0, 0],
             "angularVelocity": [0, 30, 70]
+          },
+          {
+              "type": "Collision",
+              "mesh": "asteroid"
           }
         ]
       },
@@ -312,6 +336,10 @@
             "type": "Movement",
             "linearVelocity": [0, 0, 0],
             "angularVelocity": [0, 30, 70]
+          },
+          {
+              "type": "Collision",
+              "mesh": "asteroid"
           }
         ]
       }
