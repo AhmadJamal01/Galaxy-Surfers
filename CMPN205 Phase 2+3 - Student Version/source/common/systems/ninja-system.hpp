@@ -111,12 +111,17 @@ namespace our
 
 
             // A & D moves the player left or right 
-
+            //Fixed points
+            entity->localTransform.rotation[2]*=0.9;
+            entity->localTransform.rotation[1]*=0.1;
+            entity->localTransform.rotation[0]*=0.1;
+            entity->localTransform.position[1]*=0.1;
             if(app->getKeyboard().isPressed(GLFW_KEY_D)) 
             {   
                 if( entity->localTransform.position.x > -4.0f){
                 position -= right * (deltaTime * speed.x * 0.3f);
                 }
+                entity->localTransform.rotation[2]+=0.01;
                 //if( entity->localTransform.rotation.z > glm::radians(-5.0f)){
                 //entity->localTransform.rotation.z -= glm::radians(15.0f) * deltaTime;
                 //}
@@ -128,13 +133,14 @@ namespace our
                 if( entity->localTransform.position.x < 4.0f){
                 position += right * (deltaTime * speed.x * 0.3f);
                 }
+                entity->localTransform.rotation[2]-=0.01;
                 //if( entity->localTransform.rotation.z < glm::radians(5.0f)){
                 //entity->localTransform.rotation.z += glm::radians(15.0f) * deltaTime;
                 //}
             }
             // note that the previous four directions are reversed because by default the camera is rotated to look from behind the ninja.
         }
-
+        
         // When the state exits, it should call this function to ensure the mouse is unlocked
         void exit(){
             if(mouse_locked) {
