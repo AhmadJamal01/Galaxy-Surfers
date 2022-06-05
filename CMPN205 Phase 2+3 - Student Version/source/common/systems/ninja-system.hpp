@@ -72,7 +72,6 @@ namespace our
             // As soon as we find one, we break
             curr_time = (float)glfwGetTime() - start_time;
             score = static_cast<int>(curr_time) + extra_score;
-
             for (auto entity : world->getEntities())
             {
                 //= Look for the NinjaControllerComponent (has speed data so far)
@@ -173,7 +172,7 @@ namespace our
             }
             // note that the previous four directions are reversed because by default the camera is rotated to look from behind the ninja.
             Entity *collidedWith = collisionSystem.detectCollision(world);
-            if (collidedWith)
+            if (collidedWith && collidedWith->name != "bonus")
             {
                 collidedWith->visible = false;
                 collision_time = (float)glfwGetTime();
@@ -184,6 +183,11 @@ namespace our
                 // if(lives == 0){
                 //     state-> getApp()->changeState("menu-state");
                 // }
+            }
+            else if (collidedWith && collidedWith->name == "bonus")
+            {
+                collidedWith->visible = false;
+                extra_score += (collidedWith->getComponent<CollisionComponent>()->bonus);
             }
 
             if ((float)glfwGetTime() - collision_time > exhaustion_time)
@@ -226,7 +230,7 @@ namespace our
                 // ImGui::DragFloat3("Player scale", &controller->getOwner()->localTransform.scale.x, -2.0f, 2.0f);
                 //  Set imgui window position to top right
                 ImGui::SetWindowPos(ImVec2(app->getWindowSize().x - 200.0f, 0.0f)); // Will be back.
-                std::string player_score = "score: " + std::to_string(this->score);
+                std::string player_score = "score: " + std::to_string((int)this->score);
                 std::string hearts = "Lives: " + std::to_string(this->lives);
                 ImGui::SetWindowFontScale(2.5f);
                 ImGui::TextUnformatted(player_score.c_str());

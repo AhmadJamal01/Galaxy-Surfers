@@ -1,11 +1,10 @@
-int i = 0;
 #pragma once
 
 #include "../ecs/world.hpp"
 #include "../components/camera.hpp"
 #include "../components/collision-component.hpp"
 #include "../components/mesh-renderer.hpp"
-
+#include "../ecs/entity.hpp"
 #include "../application.hpp"
 
 #include <glm/glm.hpp>
@@ -27,7 +26,7 @@ namespace our
 
     public:
         // This should be called every frame to detect if the player and any other entity collide.
-        Entity *    (World *world)
+        Entity *detectCollision(World *world)
         {
             for (auto entity1 : world->getEntities())
             {

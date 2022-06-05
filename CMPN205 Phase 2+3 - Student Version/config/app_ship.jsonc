@@ -207,7 +207,7 @@
       },
       //!monkey
       {
-        "name": "monster",
+        "name": "bonus",
         "rotation": [0, 180, 0],
         "position": [0, 0, 50],
         "scale": [0.5, 0.5, 0.5],
@@ -216,6 +216,11 @@
             "type": "Mesh Renderer",
             "mesh": "monkey",
             "material": "monkey"
+          },
+          {
+            "type": "Collision",
+            "mesh": "monkey",
+            "bonus": 200
           },
           {
             "type": "Spawning Controller",
