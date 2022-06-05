@@ -140,18 +140,18 @@
             "positionSensitivity": [3000.0, 350.0, 350.0]
           },
           {
-            "type": "Movement",                       // Any entity holding this componenet will spontaneously move with the velocities below (Asteroids are static).
+            "type": "Movement", // Any entity holding this componenet will spontaneously move with the velocities below (Asteroids are static).
             "linearVelocity": [0, 0, 3],
             "angularVelocity": [0, 0, 0]
           },
           {
-              "type": "Collision",
-              "mesh": "ship"
+            "type": "Collision",
+            "mesh": "ship"
           }
         ],
         "children": [
           {
-            "position": [0, 110, -125],       // setting offset to the ship (Decied with ImGUI)
+            "position": [0, 110, -125], // setting offset to the ship (Decied with ImGUI)
             "rotation": [-20, 180, 0.0],
             // It's a child entity of the ship with only the camera component.
             "components": [{ "type": "Camera" }]
@@ -172,39 +172,63 @@
             ]
           },
           //!moon
-      {
-        "position": [0, 1400, -700],
-        "scale": [500, 500, 500],
-        "components": [
           {
-            "type": "Mesh Renderer",
-            "mesh": "sphere",
-            "material": "shiny_moon"
-          },
-          {
-            "type": "Movement",
-            "linearVelocity": [0, 0, 3],
-            "angularVelocity": [0, 90, 0]
-          }
-        ],
-        "children": [
-          {
-            "position": [0, 0, 0],
+            "position": [0, 1400, -700],
+            "scale": [500, 500, 500],
             "components": [
               {
-                "type": "Light",
-                "kind": 1,
-                "diffuse": [1, 1, 1],
-                "specular": [1, 1, 1],
-                "cone_angles": [0, 5],
-                "attenuation": [0.0025, 0, 0]
+                "type": "Mesh Renderer",
+                "mesh": "sphere",
+                "material": "shiny_moon"
+              },
+              {
+                "type": "Movement",
+                "linearVelocity": [0, 0, 3],
+                "angularVelocity": [0, 90, 0]
+              }
+            ],
+            "children": [
+              {
+                "position": [0, 0, 0],
+                "components": [
+                  {
+                    "type": "Light",
+                    "kind": 1,
+                    "diffuse": [1, 1, 1],
+                    "specular": [1, 1, 1],
+                    "cone_angles": [0, 5],
+                    "attenuation": [0.0025, 0, 0]
+                  }
+                ]
               }
             ]
           }
         ]
-      }
+      },
+      //!monkey
+      {
+        "name": "bonus",
+        "rotation": [0, 180, 0],
+        "position": [0, 0, 50],
+        "scale": [0.5, 0.5, 0.5],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "monkey",
+            "material": "monkey"
+          },
+          {
+            "type": "Collision",
+            "mesh": "monkey",
+            "bonus": 200
+          },
+          {
+            "type": "Spawning Controller",
+            "respawningFrequency": 20 // in seconds
+          }
         ]
       },
+
       //!asteroid
       {
         "name": "obstacle",
@@ -223,8 +247,11 @@
             "angularVelocity": [0, 30, 70]
           },
           {
-              "type": "Collision",
-              "mesh": "asteroid"
+            "type": "Collision",
+            "mesh": "asteroid"
+          },
+          {
+            "type": "Spawning Controller"
           }
         ]
       },
@@ -246,8 +273,11 @@
             "angularVelocity": [0, 30, 70]
           },
           {
-              "type": "Collision",
-              "mesh": "asteroid"
+            "type": "Collision",
+            "mesh": "asteroid"
+          },
+          {
+            "type": "Spawning Controller"
           }
         ]
       },
@@ -265,12 +295,14 @@
           },
           {
             "type": "Movement",
-            "linearVelocity": [0, 0, 0],
-            "angularVelocity": [0, 30, 70]
+            "angularVelocity": [10, 30, 70]
           },
           {
-              "type": "Collision",
-              "mesh": "asteroid"
+            "type": "Collision",
+            "mesh": "asteroid"
+          },
+          {
+            "type": "Spawning Controller"
           }
         ]
       },
@@ -288,12 +320,14 @@
           },
           {
             "type": "Movement",
-            "linearVelocity": [0, 0, 0],
-            "angularVelocity": [0, 30, 70]
+            "angularVelocity": [10, 30, 70]
           },
           {
-              "type": "Collision",
-              "mesh": "asteroid"
+            "type": "Collision",
+            "mesh": "asteroid"
+          },
+          {
+            "type": "Spawning Controller"
           }
         ]
       },
@@ -311,12 +345,14 @@
           },
           {
             "type": "Movement",
-            "linearVelocity": [0, 0, 0],
-            "angularVelocity": [0, 30, 70]
+            "angularVelocity": [10, 30, 70]
           },
           {
-              "type": "Collision",
-              "mesh": "asteroid"
+            "type": "Collision",
+            "mesh": "asteroid"
+          },
+          {
+            "type": "Spawning Controller"
           }
         ]
       },
@@ -334,12 +370,14 @@
           },
           {
             "type": "Movement",
-            "linearVelocity": [0, 0, 0],
-            "angularVelocity": [0, 30, 70]
+            "angularVelocity": [10, 30, 70]
           },
           {
-              "type": "Collision",
-              "mesh": "asteroid"
+            "type": "Collision",
+            "mesh": "asteroid"
+          },
+          {
+            "type": "Spawning Controller"
           }
         ]
       }

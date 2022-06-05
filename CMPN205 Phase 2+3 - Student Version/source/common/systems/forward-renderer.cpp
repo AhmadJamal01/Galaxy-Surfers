@@ -96,7 +96,7 @@ namespace our
                 postprocessShader->attach("assets/shaders/fullscreen.vert", GL_VERTEX_SHADER);
                 postprocessShader->attach(shader.get<std::string>(), GL_FRAGMENT_SHADER);
                 postprocessShader->link();
-                postprocessShaders.push_back(postprocessShader);    //= push into vector of postprocessing shaders
+                postprocessShaders.push_back(postprocessShader); //= push into vector of postprocessing shaders
             }
 
             //= Initially postProcessMaterial will be null and we use the normal shader.
@@ -104,7 +104,7 @@ namespace our
             if (postprocessShaders.size() > 0)
             {
                 postprocessMaterial = new TexturedMaterial();
-                postprocessMaterial->shader = postprocessShaders[0];        //= the default postprocessing effect does nothing.
+                postprocessMaterial->shader = postprocessShaders[0]; //= the default postprocessing effect does nothing.
                 postprocessMaterial->texture = colorTarget;
                 postprocessMaterial->sampler = postprocessSampler;
                 // The default options are fine but we don't need to interact with the depth buffer
@@ -160,6 +160,8 @@ namespace our
             // If we hadn't found a camera yet, we look for a camera in this entity
             if (!camera)
                 camera = entity->getComponent<CameraComponent>();
+            if (!entity->visible)
+                continue;
             // If this entity has a mesh renderer component
             if (auto meshRenderer = entity->getComponent<MeshRendererComponent>(); meshRenderer)
             {
@@ -176,10 +178,7 @@ namespace our
                 }
                 else if (command.material->affectedByLight)
                 {
-                    if (entity->name == "obstacle")
-                        ;
-                    else
-                        lightSupportCommands.push_back(command);
+                    lightSupportCommands.push_back(command);
                 }
                 else
                 {
@@ -246,41 +245,6 @@ namespace our
         // TODO: (Req 8) Clear the color and depth buffers
         // configures openGl to clear the color buffer and depth buffer each frame
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // DONE: Update Obstacles position
-        for (auto entity : world->getEntities())
-        {
-            if (auto meshRenderer = entity->getComponent<MeshRendererComponent>(); meshRenderer)
-            {
-                if (entity->name == "obstacle")
-                {
-
-                    // We construct a command from it
-                    RenderCommand command;
-                    // model matrix is the transformation matrix from local space to world space
-                    command.localToWorld = meshRenderer->getOwner()->getLocalToWorldMatrix();
-                    // get object center position in the world space
-                    command.center = glm::vec3(command.localToWorld * glm::vec4(0, 0, 0, 1));
-                    command.mesh = meshRenderer->mesh;
-                    command.material = meshRenderer->material;
-                    // transform the object center from world to screen space
-                    glm::vec4 pos = VP * glm::vec4(command.center, 1.f);
-                    // if the object is out of sight, reset its position to be in front of the camera
-                    // by 16 units
-                    if (pos.z <= 0)
-                    {
-                        // add random number to player z coordinate so it's not always the same value.
-                        int z_random_displacement = rand() % 6 - 2;
-                        entity->localTransform.position.z += 16 + z_random_displacement;
-                        // add random number to player x coordinate so it's not always the same value.
-                        int x_random_displacement = rand() % 3 - 1;
-                        entity->localTransform.position.x += x_random_displacement;
-                    }
-                    command.localToWorld = meshRenderer->getOwner()->getLocalToWorldMatrix();
-                    lightSupportCommands.push_back(command);
-                }
-            }
-        }
 
         // TODO: (Req 8) Draw all the opaque commands
         //  Don't forget to set the "transform" uniform to be equal the model-view-projection matrix for each render command

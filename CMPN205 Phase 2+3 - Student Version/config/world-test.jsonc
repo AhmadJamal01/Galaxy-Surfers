@@ -10,8 +10,17 @@
   },
   "scene": {
     "renderer": {
-      "sky": "assets/textures/sky.jpg",
-      "postprocess": "assets/shaders/postprocess/vignette.frag"
+      "sky": "assets/textures/meh.jpeg",
+      "postprocess": [
+        "assets/shaders/postprocess/default.frag",
+        "assets/shaders/postprocess/cartoonize.frag",
+        "assets/shaders/postprocess/chromatic-aberration.frag",
+        "assets/shaders/postprocess/convolution.frag",
+        "assets/shaders/postprocess/fisheye.frag",
+        "assets/shaders/postprocess/grayscale.frag",
+        "assets/shaders/postprocess/radial-blur.frag",
+        "assets/shaders/postprocess/vignette.frag"
+      ]
     },
     "assets": {
       "shaders": {
@@ -22,6 +31,10 @@
         "textured": {
           "vs": "assets/shaders/textured.vert",
           "fs": "assets/shaders/textured.frag"
+        },
+        "lightened": {
+          "vs": "assets/shaders/light.vert",
+          "fs": "assets/shaders/light.frag"
         }
       },
       "textures": {
@@ -30,16 +43,24 @@
         "wood": "assets/textures/wood.jpg",
         "glass": "assets/textures/glass-panels.png",
         "monkey": "assets/textures/monkey.png",
-        "ninja": "assets/textures/avatar_ninja.png",
-        "train": "assets/textures/train.png"
+        "monkey_albedo": "assets/textures/rocky_monkey_albedo.jpg",
+        "monkey_ambient_occlusion": "assets/textures/rocky_monkey_ambient_occlusion.jpg",
+        "monkey_emissive": "assets/textures/rocky_monkey_emissive.jpg",
+        "monkey_roughness": "assets/textures/rocky_monkey_roughness.jpg",
+        "monkey_specular": "assets/textures/rocky_monkey_specular.jpg",
+        "black": "assets/textures/black.jpg",
+        "white": "assets/textures/white.jpg",
+        "ship": "assets/textures/CourierShip.jpg",
+        "ship_emissive": "assets/textures/CourierShip_emissive.jpg",
+        "asteroid": "assets/textures/asteroid.bmp"
       },
       "meshes": {
         "cube": "assets/models/cube.obj",
         "monkey": "assets/models/monkey.obj",
         "plane": "assets/models/plane.obj",
         "sphere": "assets/models/sphere.obj",
-        "ninja": "assets/models/Ninja.obj",
-        "train": "assets/models/train.obj"
+        "ship": "assets/models/CourierShip.obj",
+        "asteroid": "assets/models/asteroid.obj"
       },
       "samplers": {
         "default": {},
@@ -48,248 +69,182 @@
         }
       },
       "materials": {
-        "metal": {
-          "type": "tinted",
-          "shader": "tinted",
-          "pipelineState": {
-            "faceCulling": {
-              "enabled": false
-            },
-            "depthTesting": {
-              "enabled": true
-            }
-          },
-          "tint": [0.45, 0.4, 0.5, 1]
-        },
-        "glass": {
-          "type": "textured",
-          "shader": "textured",
-          "pipelineState": {
-            "faceCulling": {
-              "enabled": false
-            },
-            "depthTesting": {
-              "enabled": true
-            },
-            "blending": {
-              "enabled": true,
-              "sourceFactor": "GL_SRC_ALPHA",
-              "destinationFactor": "GL_ONE_MINUS_SRC_ALPHA"
-            },
-            "depthMask": false
-          },
-          "transparent": true,
-          "tint": [1, 1, 1, 1],
-          "texture": "glass",
-          "sampler": "pixelated"
-        },
-        "grass": {
-          "type": "textured",
-          "shader": "textured",
-          "pipelineState": {
-            "faceCulling": {
-              "enabled": false
-            },
-            "depthTesting": {
-              "enabled": true
-            }
-          },
-          "tint": [1, 1, 1, 1],
-          "texture": "grass",
-          "sampler": "default"
-        },
         "monkey": {
-          "type": "textured",
-          "shader": "textured",
+          "type": "LightMaterial",
+          "shader": "lightened",
           "pipelineState": {
-            "faceCulling": {
-              "enabled": false
-            },
             "depthTesting": {
               "enabled": true
             }
           },
-          "tint": [1, 1, 1, 1],
-          "texture": "monkey",
-          "sampler": "default"
+          "albedo": "monkey_albedo",
+          "ambient_occlusion": "monkey_ambient_occlusion",
+          "emissive": "monkey_emissive",
+          "roughness": "monkey_roughness",
+          "specular": "monkey_specular"
         },
-        "moon": {
-          "type": "textured",
-          "shader": "textured",
+        "shiny_moon": {
+          "type": "LightMaterial",
+          "shader": "lightened",
           "pipelineState": {
-            "faceCulling": {
-              "enabled": false
-            },
             "depthTesting": {
               "enabled": true
             }
           },
-          "tint": [1, 1, 1, 1],
-          "texture": "moon",
-          "sampler": "default"
+          "emissive": "moon"
         },
-        "ninja": {
-          "type": "textured",
-          "shader": "textured",
+
+        "ship": {
+          "type": "LightMaterial",
+          "shader": "lightened",
           "pipelineState": {
-            "faceCulling": {
-              "enabled": false
-            },
             "depthTesting": {
               "enabled": true
             }
           },
-          "tint": [1, 1, 1, 1],
-          "texture": "ninja",
-          "sampler": "default"
+          "albedo": "ship",
+          "emissive": "ship_emissive",
+          "specular": "white",
+          "roughness": "ship",
+          "ambient_occlusion": "ship"
         },
-        "train": {
-          "type": "textured",
-          "shader": "textured",
+        "asteroid": {
+          "type": "LightMaterial",
+          "shader": "lightened",
           "pipelineState": {
-            "faceCulling": {
-              "enabled": false
-            },
             "depthTesting": {
               "enabled": true
             }
           },
-          "tint": [1, 1, 1, 1],
-          "texture": "train",
-          "sampler": "default"
+          "albedo": "asteroid",
+          "roughness": "asteroid",
+          "ambient_occlusion": "asteroid"
         }
       }
     },
     "world": [
-      // REMOVED THE SEPRATE CAMERA ENTITY AND MADE IT A CHILD OF THE NINJA.
-      // Added Movement Component to simulate infinite running
+      //!Ship
       {
-        // Added an entity for the ninja in the scene with a mesh renderer component.
-        "name": "player",
         "rotation": [0, 0, 0],
-        "scale": [5, 5, 5],
+        "scale": [0.01, 0.01, 0.01],
         "position": [0, 0, 0],
+        "name": "player",
         "components": [
           {
             "type": "Mesh Renderer",
-            "mesh": "ninja",
-            "material": "ninja"
+            "mesh": "ship",
+            "material": "ship"
           },
           {
-            "type": "Ninja Camera Controller", // It holds speed info about our ninja.
-            "positionSensitivity": [35.0, 35.0, 35.0]
+            "type": "Ninja Camera Controller", // It holds speed info about our ship.
+            "positionSensitivity": [3000.0, 350.0, 350.0]
           },
           {
-            "type": "Movement",
+            "type": "Movement", // Any entity holding this componenet will spontaneously move with the velocities below (Asteroids are static).
             "linearVelocity": [0, 0, 3],
             "angularVelocity": [0, 0, 0]
+          },
+          {
+            "type": "Collision",
+            "mesh": "ship"
           }
         ],
         "children": [
           {
-            "position": [0, 0.18, -0.35], // setting offset to the ninja (Decied with ImGUI)
+            "position": [0, 110, -125], // setting offset to the ship (Decied with ImGUI)
             "rotation": [-20, 180, 0.0],
-
-            // It's a child entity of the ninja with only the camera component.
+            // It's a child entity of the ship with only the camera component.
             "components": [{ "type": "Camera" }]
+          },
+          {
+            "scale": [100, 100, 100],
+            "position": [0, 0, 1],
+            "rotation": [0, 0, 1],
+            "components": [
+              {
+                "type": "Light",
+                "kind": 2,
+                "diffuse": [1, 1, 1],
+                "specular": [1, 1, 1],
+                "cone_angles": [20, 0],
+                "attenuation": [0.01, 0, 0.4]
+              }
+            ]
+          },
+          //!moon
+          {
+            "position": [0, 1400, -700],
+            "scale": [500, 500, 500],
+            "components": [
+              {
+                "type": "Mesh Renderer",
+                "mesh": "sphere",
+                "material": "shiny_moon"
+              },
+              {
+                "type": "Movement",
+                "linearVelocity": [0, 0, 3],
+                "angularVelocity": [0, 90, 0]
+              }
+            ],
+            "children": [
+              {
+                "position": [0, 0, 0],
+                "components": [
+                  {
+                    "type": "Light",
+                    "kind": 1,
+                    "diffuse": [1, 1, 1],
+                    "specular": [1, 1, 1],
+                    "cone_angles": [0, 5],
+                    "attenuation": [0.0025, 0, 0]
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
-      // Ground
+      //!monkey
       {
-        "position": [0, -1, 0],
-        "rotation": [-90, 0, 0],
-        "scale": [10, 10, 1],
+        "name": "monster",
+        "rotation": [0, 180, 0],
+        "position": [0, 0, 50],
+        "scale": [0.5, 0.5, 0.5],
         "components": [
           {
             "type": "Mesh Renderer",
-            "mesh": "plane",
-            "material": "grass"
+            "mesh": "monkey",
+            "material": "monkey"
+          }
+        ]
+      },
+
+      //!asteroid
+      {
+        "name": "obstacle",
+        "position": [-3, 0, 18],
+        "scale": [0.01, 0.01, 0.01],
+        "rotation": [-3, 0, 7],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "asteroid",
+            "material": "asteroid"
           },
           {
             "type": "Movement",
-            "linearVelocity": [0, 0, 3],
-            "angularVelocity": [0, 0, 0]
-          }
-        ]
-      },
-      // right lane train
-      {
-        "name": "obstacle",
-        "position": [-3, -1, 0],
-        "rotation": [0, 0, 0],
-        "scale": [0.1, 0.1, 0.1],
-        "components": [
+            "angularVelocity": [10, 30, 70]
+          },
           {
-            "type": "Mesh Renderer",
-            "mesh": "train",
-            "material": "train"
+            "type": "Collision",
+            "mesh": "asteroid"
+          },
+          {
+            "type": "Spawning Controller",
+            "mesh": "asteroid"
           }
         ]
-
-        //   },
-        //   // right lane train
-        //   {
-        //     "position": [-3, -1, 15],
-        //     "rotation": [0, 0, 0],
-        //     "scale": [0.1, 0.1, 0.1],
-        //     "components": [
-        //       {
-        //         "type": "Mesh Renderer",
-        //         "mesh": "train",
-        //         "material": "train"
-        //       }
-        //     ]
-        //   },
-        //   // center lane train
-        //   {
-        //     "position": [0, -1, 5],
-        //     "rotation": [0, 0, 0],
-        //     "scale": [0.1, 0.1, 0.1],
-        //     "components": [
-        //       {
-        //         "type": "Mesh Renderer",
-        //         "mesh": "train",
-        //         "material": "train"
-        //       }
-        //     ]
-        //   },
-        //   {
-        //     "position": [0, -1, 15],
-        //     "rotation": [0, 0, 0],
-        //     "scale": [0.1, 0.1, 0.1],
-        //     "components": [
-        //       {
-        //         "type": "Mesh Renderer",
-        //         "mesh": "train",
-        //         "material": "train"
-        //       }
-        //     ]
-        //   },
-        //   // left lane train
-        //   {
-        //     "position": [3, -1, 0],
-        //     "rotation": [0, 0, 0],
-        //     "scale": [0.1, 0.1, 0.1],
-        //     "components": [
-        //       {
-        //         "type": "Mesh Renderer",
-        //         "mesh": "train",
-        //         "material": "train"
-        //       }
-        //     ]
-        //   },
-        //   {
-        //     "position": [3, -1, 15],
-        //     "rotation": [0, 0, 0],
-        //     "scale": [0.1, 0.1, 0.1],
-        //     "components": [
-        //       {
-        //         "type": "Mesh Renderer",
-        //         "mesh": "train",
-        //         "material": "train"
-        //       }
-        //     ]
       }
     ]
   }
