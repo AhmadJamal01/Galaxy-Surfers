@@ -22,7 +22,8 @@ class Playstate : public our::State
     our::MovementSystem movementSystem;
 
     our::SpawningSystem spawningController;
-    our::CollisionSystem collisionSystem;
+    our::State state;
+    // our::CollisionSystem collisionSystem;
 
     our::LightSystem lightSystem;
     void onInitialize() override
@@ -41,7 +42,7 @@ class Playstate : public our::State
         }
         // We initialize the camera controller system since it needs a pointer to the app
         cameraController.enter(getApp());
-        ninjaSystem.enter(getApp(), &renderer); // pass the forward renderer which will be needed in the ninja
+        ninjaSystem.enter(getApp(), &renderer, &state); // pass the forward renderer which will be needed in the ninja
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
         spawningController.initialize(size);
@@ -58,7 +59,8 @@ class Playstate : public our::State
         spawningController.update(&world, (float)deltaTime);
         // And finally we use the renderer system to draw the scene
         renderer.render(&world);
-        collisionSystem.detectCollision(&world);
+
+        // collisionSystem.detectCollision(&world);
     }
 
     void onDestroy() override

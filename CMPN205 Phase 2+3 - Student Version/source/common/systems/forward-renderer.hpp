@@ -50,7 +50,7 @@ namespace our
         // windowSize is the width & height of the window (in pixels).
         void initialize(glm::ivec2 windowSize, const nlohmann::json &config);
         // Toggle postprocessing
-        void choosePostProcessing(int index);   //= To change the post process effect by choosing the postprocessShader
+        void setPostProcessing(int index);   //= To change the post process effect by choosing the postprocessShader
         // Clean up the renderer
         void destroy();
         // This function should be called every frame to draw the given world

@@ -114,11 +114,14 @@ namespace our
         }
     }
 
-    void ForwardRenderer::choosePostProcessing(int index) //= To choose the preprocessing effect (also used in ninja system upon key press)
+
+    void ForwardRenderer::setPostProcessing(int index) //= To choose the preprocessing effect (also used in ninja system upon key press)
     {
         if (index < postprocessShaders.size())
             postprocessMaterial->shader = postprocessShaders[index];
     }
+
+
 
     void ForwardRenderer::destroy()
     {

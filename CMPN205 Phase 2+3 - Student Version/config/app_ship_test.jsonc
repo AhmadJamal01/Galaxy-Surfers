@@ -2,7 +2,7 @@
     "start-scene": "main",
     "window":
     {
-        "title":"Default Game Window",
+        "title":"Galaxy Surfers",
         "size":{
             "width":1280,
             "height":720

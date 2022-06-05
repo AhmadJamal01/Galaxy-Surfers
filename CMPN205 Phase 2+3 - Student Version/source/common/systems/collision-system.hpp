@@ -27,7 +27,7 @@ namespace our
 
     public:
         // This should be called every frame to detect if the player and any other entity collide.
-        void detectCollision(World *world)
+        Entity *    (World *world)
         {
             for (auto entity1 : world->getEntities())
             {
@@ -42,6 +42,8 @@ namespace our
             }
             for (auto entity2 : world->getEntities())
             {
+                if (!entity2->visible)
+                    continue;
                 // looping over all entities with collision components who are not the player
                 if (auto boxCandidate = entity2->getComponent<CollisionComponent>(); boxCandidate != nullptr && entity2->name != "player")
                 {
@@ -87,11 +89,13 @@ namespace our
                         (minCameraVertex.y <= maxCollider.y && maxCameraVertex.y >= minCollider.y) &&
                         (minCameraVertex.z <= maxCollider.z && maxCameraVertex.z >= minCollider.z))
                     {
-                        i++;
-                        std::cout << "collision detected with " << name << " " << i << std::endl;
+                        // i++;
+                        // std::cout << "collision detected with " << name << " " << i << std::endl;
+                        return myEntity2;
                     }
                 }
             }
+            return nullptr;
         }
     };
 
