@@ -1,4 +1,6 @@
 #include "spawning-component.hpp"
+#include "../asset-loader.hpp"
+
 namespace our
 {
 
@@ -17,5 +19,8 @@ namespace our
 
     void SpawningController::deserialize(const nlohmann::json &data)
     {
+        if (!data.is_object())
+            return;
+        respawningFreq = data.value("respawningFrequency", respawningFreq);
     }
 }

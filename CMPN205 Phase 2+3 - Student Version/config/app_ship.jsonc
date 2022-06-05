@@ -216,6 +216,10 @@
             "type": "Mesh Renderer",
             "mesh": "monkey",
             "material": "monkey"
+          },
+          {
+            "type": "Spawning Controller",
+            "respawningFrequency": 20 // in seconds
           }
         ]
       },

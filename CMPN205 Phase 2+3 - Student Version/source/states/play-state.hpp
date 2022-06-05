@@ -55,7 +55,7 @@ class Playstate : public our::State
         cameraController.update(&world, (float)deltaTime);
         ninjaSystem.update(&world, (float)deltaTime);
         lightSystem.update(&world);
-        spawningController.update(&world);
+        spawningController.update(&world, (float)deltaTime);
         // And finally we use the renderer system to draw the scene
         renderer.render(&world);
         collisionSystem.detectCollision(&world);

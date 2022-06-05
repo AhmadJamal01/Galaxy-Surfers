@@ -3,6 +3,7 @@
 #include "../ecs/component.hpp"
 
 #include <glm/glm.hpp>
+#include "../mesh/mesh.hpp"
 
 namespace our
 {
@@ -10,9 +11,11 @@ namespace our
     {
         glm::vec3 minLimit = {-5.0f, -1.0 / 5.0f, 0.0f};
         glm::vec3 maxLimit = {5.0f, 1.0 / 5.0f, 500.0f};
-        glm::vec3 rangeValues = {3, 3, 6};
+        glm::vec3 rangeValues = {3, 3, 100};
 
     public:
+        float respawningFreq = 0;
+        float timeElapsed = 0;
         //= The ID of this component type is "Spawning Controller" (will be used in JSON)
         static std::string getID() { return "Spawning Controller"; }
 
