@@ -210,7 +210,7 @@
         "name": "bonus",
         "rotation": [0, 180, 0],
         "position": [0, 0, 50],
-        "scale": [0.5, 0.5, 0.5],
+        "scale": [0.8, 0.8, 0.8],
         "components": [
           {
             "type": "Mesh Renderer",
@@ -232,7 +232,7 @@
       //!asteroid
       {
         "name": "obstacle",
-        "position": [-3, 0, 0],
+        "position": [0, 0, 10],
         "scale": [0.001, 0.001, 0.001],
         "rotation": [0, 0, 0],
         "components": [

@@ -166,7 +166,6 @@ namespace our
             if (auto meshRenderer = entity->getComponent<MeshRendererComponent>(); meshRenderer)
             {
                 if(!meshRenderer->material){
-                        std::cout<<" Welelkofdsj f";
                 }
                 // We construct a command from it
                 RenderCommand command;
