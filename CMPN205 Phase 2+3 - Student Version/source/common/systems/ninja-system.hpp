@@ -133,7 +133,7 @@ namespace our
                 if( entity->localTransform.position.x > -4.0f){
                 position -= right * (deltaTime * speed.x * 0.3f);
                 }
-                entity->localTransform.rotation.z = 0.01;
+                entity->localTransform.rotation.z += 0.01;
                 //if( entity->localTransform.rotation.z > glm::radians(-5.0f)){
                 //entity->localTransform.rotation.z -= glm::radians(15.0f) * deltaTime;
                 //}
