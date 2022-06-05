@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include <string>  
-// include glfw
+#include <GLFW/glfw3.h>
 
 #include "./collision-system.hpp"
 
@@ -23,24 +23,30 @@ namespace our
 
     class NinjaSystem {
         Application* app;               // The application in which the state runs (app holds general data, controlling events)
+        State * state;
         bool mouse_locked = false;      // Is the mouse locked (e.g. unlock it in main menu only)
         CameraComponent * playerCamera;           //=We need external acess to the camera component of the player for ImGUI
         NinjaControllerComponent *controller;         //= For control of player and IMGui
         ForwardRenderer * postprocessControl;    //=to use the togglePostProcessing function implemented in the forward renderer (will be set upon enter).
+        MovementComponent * playerMovement;   //= to slow down automatic movement upon collision.
         enum PostprocessingEffect {def, cartoonize, chromatic_aberration, convolution, fisheye, grayscale, radial_blur, vignette};
         int index;      //= to rotate postprocessing effects with each press of p (changePostProcessingFunction).
         float curr_time;
         float start_time;
+        float collision_time = 0.0f;
         int score;
         int extra_score;
         int lives = 3;
+        float exhaustion_time = 3.0f;
+        float slow_down_effect = 1.0f;
 
         our::CollisionSystem collisionSystem;
     public:
         // When a state enters, it should call this function and give it the pointer to the application
-        void enter(Application* app, ForwardRenderer * FR){  //= This and the ninja's update function will be invoked in playe-state  (initialize and ondraw)   
+        void enter(Application* app, ForwardRenderer * FR, State* state){  //= This and the ninja's update function will be invoked in playe-state  (initialize and ondraw)   
             this->app = app;
             this->postprocessControl = FR;                  //=to set postprocessControl as well.
+            this->state = state;
             this->start_time = (float)glfwGetTime();
             this->curr_time = (float)glfwGetTime() - start_time;
             this->extra_score= 0;
@@ -89,25 +95,26 @@ namespace our
             //if(app->getKeyboard().isPressed(GLFW_KEY_E)) position -= up * (deltaTime * speed.y);
             if(app->getKeyboard().justPressed(GLFW_KEY_P)) {
             // Cycle through postprocessing effects    
-            postprocessControl->choosePostProcessing((++index) % 7);
+            postprocessControl->setPostProcessing((++index) % 7);
             }
 
 
             // S & W moves the player back and forth
             //! Ninja Controls.
-            if(app->getKeyboard().isPressed(GLFW_KEY_W)) 
+            if(app->getKeyboard().isPressed(GLFW_KEY_W) ) 
             {
                 this->extra_score += 1;
                 position -= front * (deltaTime * speed.z );
                 playerCamera->getOwner()->localTransform.position.z = -155.0f;
                 if(app->getKeyboard().justPressed(GLFW_KEY_W)) {
-                    postprocessControl->choosePostProcessing(radial_blur);
+                    index = radial_blur;
+                    postprocessControl->setPostProcessing(index);
                 }
-                
             }
             else{
                  if(app->getKeyboard().justReleased(GLFW_KEY_W)) {
-                    postprocessControl->choosePostProcessing(def);
+                    index = def;
+                    postprocessControl->setPostProcessing(index);
                 }
                 playerCamera->getOwner()->localTransform.position.z = -125.0f;
             }
@@ -117,16 +124,16 @@ namespace our
 
             // A & D moves the player left or right 
             //Fixed points
-            entity->localTransform.rotation[2]*=0.9;
-            entity->localTransform.rotation[1]*=0.1;
-            entity->localTransform.rotation[0]*=0.1;
-            entity->localTransform.position[1]*=0.1;
+            entity->localTransform.rotation.z*=0.9;
+            entity->localTransform.rotation.y*=0.1;
+            entity->localTransform.rotation.x*=0.1;
+            entity->localTransform.position.y*=0.1;
             if(app->getKeyboard().isPressed(GLFW_KEY_D)) 
             {   
                 if( entity->localTransform.position.x > -4.0f){
                 position -= right * (deltaTime * speed.x * 0.3f);
                 }
-                entity->localTransform.rotation[2]+=0.01;
+                entity->localTransform.rotation.z = 0.01;
                 //if( entity->localTransform.rotation.z > glm::radians(-5.0f)){
                 //entity->localTransform.rotation.z -= glm::radians(15.0f) * deltaTime;
                 //}
@@ -138,7 +145,7 @@ namespace our
                 if( entity->localTransform.position.x < 4.0f){
                 position += right * (deltaTime * speed.x * 0.3f);
                 }
-                entity->localTransform.rotation[2]-=0.01;
+                entity->localTransform.rotation.z-=0.01;
                 //if( entity->localTransform.rotation.z < glm::radians(5.0f)){
                 //entity->localTransform.rotation.z += glm::radians(15.0f) * deltaTime;
                 //}
@@ -146,13 +153,22 @@ namespace our
             // note that the previous four directions are reversed because by default the camera is rotated to look from behind the ninja.
         
             if(collisionSystem.detectCollision(world)){
-                position += front * (deltaTime * speed.z)*200.0f;
-                postprocessControl->choosePostProcessing(chromatic_aberration);                
+                collision_time = (float)glfwGetTime();
+                position += front * (deltaTime * speed.z) * 76.0f;
+                postprocessControl->setPostProcessing(chromatic_aberration);                
                 lives--;
-                if(lives<=0){
-                    std::cout << "You Lose" << std::endl;
-                }
-                std::cout << "Lives: " << lives << std::endl;
+                slow_down_effect = 0.09f;
+                //if(lives == 0){
+                //    state-> getApp()->changeState("menu-state");
+                //}
+            }
+
+            if ((float)glfwGetTime() - collision_time > exhaustion_time){  
+                postprocessControl->setPostProcessing(index);
+                slow_down_effect = 1.0f;
+            }
+            else {
+               position += front * (deltaTime * speed.z ) * (1.0f - slow_down_effect);   // like multiplying the forward speed by slow_down_effect
             }
         }
         
@@ -168,6 +184,10 @@ namespace our
             ImGuiWindowFlags window_flags = 0;
             window_flags |= ImGuiWindowFlags_NoBackground;
             window_flags |= ImGuiWindowFlags_NoTitleBar;
+            window_flags |= ImGuiWindowFlags_NoResize;
+            window_flags |= ImGuiWindowFlags_NoMove;
+            window_flags |= ImGuiWindowFlags_NoScrollbar;
+
             // etc.
             bool * open_ptr = (bool*) true;
             if(playerCamera && ImGui::Begin("Ninja", open_ptr, window_flags)){      // playerCamera is initially null (else get a segmentationf fault)
@@ -176,12 +196,15 @@ namespace our
                 //ImGui::DragFloat3("Player position", &controller->getOwner()->localTransform.position.x, -2.0f, 2.0f);
                 //ImGui::DragFloat3("Player scale", &controller->getOwner()->localTransform.scale.x, -2.0f, 2.0f);
                 // Set imgui window position to top right
-                ImGui::SetWindowPos(ImVec2(1100, 0));            // Will be back.
+                ImGui::SetWindowPos(ImVec2(app->getWindowSize().x-200.0f, 0.0f));            // Will be back.
                 std::string player_score = "score: " + std::to_string(this->score);
-                std::string hearts = (this->lives == 3)? "Lives: ♥ ♥ ♥ " : (this->lives == 2)? "Lives: ♥ ♥ " : "Lives: ♥ ";
+                std::string hearts = "Lives: " + std::to_string(this->lives);
                 ImGui::SetWindowFontScale(2.5f); 
                 ImGui::TextUnformatted(player_score.c_str());
                 ImGui::TextUnformatted(hearts.c_str());
+                // remove scroll bar
+
+
                 ImGui::End();
                 
             }
