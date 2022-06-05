@@ -232,7 +232,7 @@
       //!asteroid
       {
         "name": "obstacle",
-        "position": [0, 0, 0],
+        "position": [-3, 0, 0],
         "scale": [0.001, 0.001, 0.001],
         "rotation": [0, 0, 0],
         "components": [
@@ -258,7 +258,7 @@
       //!asteroid
       {
         "name": "obstacle",
-        "position": [3, 0, -3],
+        "position": [3, 0, -7],
         "scale": [0.001, 0.001, 0.001],
         "rotation": [0, 0, 12],
         "components": [
@@ -284,7 +284,7 @@
       //!asteroid
       {
         "name": "obstacle",
-        "position": [-3, 0, 4],
+        "position": [-3, 0, 5],
         "scale": [0.001, 0.001, 0.001],
         "rotation": [0, 0, 0],
         "components": [
@@ -309,7 +309,7 @@
       //!asteroid
       {
         "name": "obstacle",
-        "position": [3, 0, 8],
+        "position": [3, 0, 7],
         "scale": [0.001, 0.001, 0.001],
         "rotation": [0, 0, 0],
         "components": [
