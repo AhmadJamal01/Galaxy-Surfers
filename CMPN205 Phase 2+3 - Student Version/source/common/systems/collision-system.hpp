@@ -58,30 +58,22 @@ namespace our
                     // gets the min and max vertices using the mesh class
                     glm::vec3 minPlayerVertex = myEntity1->getComponent<CollisionComponent>()->mesh->minvertex;
                     glm::vec3 maxPlayerVertex = myEntity1->getComponent<CollisionComponent>()->mesh->maxvertex;
-                    // glm::vec4 minPlayerVertex = glm::vec4(myEntity2->getComponent<CollisionComponent>()->mesh->minvertex, 1);
-                    // glm::vec4 maxPlayerVertex = glm::vec4(myEntity2->getComponent<CollisionComponent>()->mesh->maxvertex, 1);
 
                     // transforms the min and max vertices to the wold space
                     minPlayerVertex *= myEntity1->localTransform.scale[0];
                     maxPlayerVertex *= myEntity1->localTransform.scale[0];
                     minPlayerVertex += myEntity1->localTransform.position;
                     maxPlayerVertex += myEntity1->localTransform.position;
-                    // minPlayerVertex = myEntity2->getLocalToWorldMatrix() * minPlayerVertex;
-                    // maxPlayerVertex = myEntity2->getLocalToWorldMatrix() * maxPlayerVertex;
 
                     // gets the min and max vertices using the mesh class
                     glm::vec3 minCollider = myEntity2->getComponent<CollisionComponent>()->mesh->minvertex;
                     glm::vec3 maxCollider = myEntity2->getComponent<CollisionComponent>()->mesh->maxvertex;
-                    // glm::vec4 minCollider = glm::vec4(myEntity2->getComponent<CollisionComponent>()->mesh->minvertex, 1);
-                    // glm::vec4 maxCollider = glm::vec4(myEntity2->getComponent<CollisionComponent>()->mesh->maxvertex, 1);
 
                     // transforms the min and max vertices to the wold space
                     minCollider *= myEntity2->localTransform.scale[0];
                     maxCollider *= myEntity2->localTransform.scale[0];
                     minCollider += myEntity2->localTransform.position;
                     maxCollider += myEntity2->localTransform.position;
-                    // minCollider = myEntity2->getLocalToWorldMatrix() * minCollider;
-                    // maxCollider = myEntity2->getLocalToWorldMatrix() * maxCollider;
 
                     // collision between AABBs check
                     if ((minPlayerVertex.x <= maxCollider.x && maxPlayerVertex.x >= minCollider.x) &&

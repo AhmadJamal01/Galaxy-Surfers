@@ -12,7 +12,7 @@
 
 #include <flags/flags.h>
 
-#ifdef _WIN64
+#ifdef _WIN32
 #include<windows.h>
 #include <Mmsystem.h>
 #include <mciapi.h>
@@ -157,7 +157,7 @@ our::WindowConfiguration our::Application::getWindowConfiguration() {
 // run_for_frames decides how many frames should be run before the application automatically closes.
 // if run_for_frames == 0, the application runs indefinitely till manually closed.
 int our::Application::run(int run_for_frames) {
-    #ifdef _WIN64
+    #ifdef _WIN32
     mciSendString("open \"assets/audio/breakout.mp3\" type mpegvideo alias mp3", NULL, 0, NULL);
     mciSendString("play mp3 repeat", NULL, 0, NULL);
     #endif
