@@ -34,7 +34,7 @@ namespace our
         MovementComponent *playerMovement;    //= to slow down automatic movement upon collision.
         enum PostprocessingEffect
         {
-            def,
+            def,                              // The default shader (no postprocessing)
             cartoonize,
             chromatic_aberration,
             convolution,
@@ -44,14 +44,16 @@ namespace our
             vignette
         };
         int index; //= to rotate postprocessing effects with each press of p (changePostProcessingFunction).
+        //= Time variables are to control the score and collision exhausion
         float curr_time;
-        float start_time;
+        float start_time;               
         float collision_time = 0.0f;
+        //= Score increases spontaneously with time meanwhile extra_score is bonus score due to speed up or monkey hit (both get added)
         int score;
         int extra_score;
         int lives = 3;
-        float exhaustion_time = 3.0f;
-        float slow_down_effect = 1.0f;
+        float exhaustion_time = 3.0f;      //= For how many seconds should the ship be exhausted after a collision          
+        float slow_down_effect = 1.0f;    //= By how much should it be slowed down during exhaustion time (1.0 means no slowdown)
 
         our::CollisionSystem collisionSystem;
 
@@ -60,8 +62,8 @@ namespace our
         void enter(Application *app, ForwardRenderer *FR, State *state)
         { //= This and the ninja's update function will be invoked in playe-state  (initialize and ondraw)
             this->app = app;
-            this->postprocessControl = FR; //=to set postprocessControl as well.
-            this->state = state;
+            this->postprocessControl = FR;          //=to set postprocessControl as well.
+            this->state = state;                    //= to be able to change the state.
             this->start_time = (float)glfwGetTime();
             this->curr_time = (float)glfwGetTime() - start_time;
             this->extra_score = 0;
@@ -73,7 +75,7 @@ namespace our
             // First of all, we search for an entity containing both a CameraComponent and a NinjaControllerComponent
             // As soon as we find one, we break
             curr_time = (float)glfwGetTime() - start_time;
-            score = static_cast<int>(curr_time) + extra_score;
+            score = static_cast<int>(curr_time) + extra_score;      // Both the time score and the extra score make up the score as mentioned above
             for (auto entity : world->getEntities())
             {
                 //= Look for the NinjaControllerComponent (has speed data so far)
@@ -85,7 +87,7 @@ namespace our
 
                 if (auto cameraCandidate = entity->getComponent<CameraComponent>(); cameraCandidate != nullptr)
                 {
-                    playerCamera = cameraCandidate; //= For IMGUI to access the camera component of the player.
+                    playerCamera = cameraCandidate; //= For Dear ImGui to access the camera component of the player.
                 }
                 if (controller && playerCamera)
                     break;
@@ -93,47 +95,43 @@ namespace our
             // If there is no entity with both a CameraComponent and a NinjaControllerComponent, we can do nothing so we return
             if (!(controller) || !(playerCamera))
                 return;
+
             // Get the entity that we found via getOwner of camera (we could use controller->getOwner())
-            Entity *entity = controller->getOwner(); //= This is Ninja. Any component gives you access to owning entity.
+            Entity *entity = controller->getOwner();        //= This is Ninja. Any component gives you access to owning entity.
 
             // We get a reference to the entity's position and rotation
-            glm::vec3 &position = entity->localTransform.position; // Ninja's position.
-            // We get the camera model matrix (relative to its parent) to compute the front, up and right directions
-            glm::mat4 matrix = entity->localTransform.toMat4(); //= Put Ninja's position, rotation and scale in one matrix
+            glm::vec3 &position = entity->localTransform.position;      // Ninja's position.
+            glm::mat4 matrix = entity->localTransform.toMat4();         //= Put Ninja's position, rotation and scale in one matrix
 
-            glm::vec3 front = glm::vec3(matrix * glm::vec4(0, 0, -1, 0)), // Getting Ninja's front direction in world space.
-                up = glm::vec3(matrix * glm::vec4(0, 1, 0, 0)),
+            glm::vec3 front = glm::vec3(matrix * glm::vec4(0, 0, -1, 0)),       // Getting Ninja's front direction in world space (so we can move it along that).
+                      up = glm::vec3(matrix * glm::vec4(0, 1, 0, 0)),
                       right = glm::vec3(matrix * glm::vec4(1, 0, 0, 0));
 
             glm::vec3 speed = controller->positionSensitivity; //= It stores speed.
-            // If the LEFT SHIFT key is pressed, we multiply the position sensitivity by the speed up factor
+            //! Shift is a cheat code.
             if (app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT))
                 speed *= controller->speedupFactor; // and speed up factor
 
-            // We change the camera position based on the keys WASD/QE
-            // Q & E moves the player up and down
-            // if(app->getKeyboard().isPressed(GLFW_KEY_Q)) position += up * (deltaTime * speed.y);
-            // if(app->getKeyboard().isPressed(GLFW_KEY_E)) position -= up * (deltaTime * speed.y);
+        
             if (app->getKeyboard().justPressed(GLFW_KEY_P))
             {
                 // Cycle through postprocessing effects
                 postprocessControl->setPostProcessing((++index) % 7);
             }
 
-            // S & W moves the player back and forth
-            //! Ninja Controls.
+            //! Ninja Forward Direction.
             if (app->getKeyboard().isPressed(GLFW_KEY_W))
             {
                 this->extra_score += 1;
                 position -= front * (deltaTime * speed.z);
-                playerCamera->getOwner()->localTransform.position.z = -155.0f;
+                playerCamera->getOwner()->localTransform.position.z = -155.0f;          // Cammera immersive effect
                 if (app->getKeyboard().justPressed(GLFW_KEY_W))
                 {
-                    index = radial_blur;
+                    index = radial_blur;                                                // speed effect
                     postprocessControl->setPostProcessing(index);
                 }
             }
-            else
+            else                                                                        // Reset Camera effects
             {
                 if (app->getKeyboard().justReleased(GLFW_KEY_W))
                 {
@@ -144,21 +142,19 @@ namespace our
             }
 
 
-            // A & D moves the player left or right 
-            //Fixed points
+            //Fixed points (to prevent vertical motion during rotation)
             entity->localTransform.rotation.z*=0.9;
             entity->localTransform.rotation.y*=0.1;
             entity->localTransform.rotation.x*=0.1;
             entity->localTransform.position.y*=0.1;
+            //= Motion along the horizontal direction along with rotation
             if(app->getKeyboard().isPressed(GLFW_KEY_D)) 
             {   
-                if( entity->localTransform.position.x > -4.0f){
+                if( entity->localTransform.position.x > -4.0f)
+                {
                 position -= right * (deltaTime * speed.x * 0.3f);
                 }
                 entity->localTransform.rotation.z += 0.01;
-                // if( entity->localTransform.rotation.z > glm::radians(-5.0f)){
-                // entity->localTransform.rotation.z -= glm::radians(15.0f) * deltaTime;
-                // }
             }
 
             if (app->getKeyboard().isPressed(GLFW_KEY_A))
@@ -168,44 +164,46 @@ namespace our
                     position += right * (deltaTime * speed.x * 0.3f);
                 }
                 entity->localTransform.rotation.z -= 0.01;
-                // if( entity->localTransform.rotation.z < glm::radians(5.0f)){
-                // entity->localTransform.rotation.z += glm::radians(15.0f) * deltaTime;
-                // }
+            
             }
             // note that the previous four directions are reversed because by default the camera is rotated to look from behind the ninja.
+            
+            //! Collision Logic
             Entity *collidedWith = collisionSystem.detectCollision(world);
-            if (collidedWith && collidedWith->name != "bonus")
+            if (collidedWith && collidedWith->name != "bonus")                  //= collision with asteroid
             {
-                collidedWith->visible = false;
-                collision_time = (float)glfwGetTime();
-                position += front * (deltaTime * speed.z) * 76.0f;
-                postprocessControl->setPostProcessing(chromatic_aberration);
-                lives--;
-                slow_down_effect = 0.09f;
+                collidedWith->visible = false;                                  // Asteroids collided with should cease to exist
+                collision_time = (float)glfwGetTime();                          // Exhaustion time counts from now
+                position += front * (deltaTime * speed.z) * 76.0f;              // Push back the Ninja
+                postprocessControl->setPostProcessing(chromatic_aberration);    // The ship gets damaged
+                lives--;                                                        // los
+                slow_down_effect = 0.09f;                                       // Set the slow down effect
 
             }
-            else if (collidedWith && collidedWith->name == "bonus")
+            else if (collidedWith && collidedWith->name == "bonus")             //= collision with bonus
             {
                 collidedWith->visible = false;
-                extra_score += (collidedWith->getComponent<CollisionComponent>()->bonus);
+                extra_score += (collidedWith->getComponent<CollisionComponent>()->bonus);   //= An increase in the player's score (hmm.)
                 collision_time = (float)glfwGetTime();
                 postprocessControl->setPostProcessing(convolution);
 
             }
 
+            //! Exhaustion time logic
             if ((float)glfwGetTime() - collision_time > exhaustion_time)
             {
-                postprocessControl->setPostProcessing(index);
+                postprocessControl->setPostProcessing(index);                               //= Once exhaustion is over go back to the previous postprocessing
                 slow_down_effect = 1.0f;
             }
             else
             {
-                position += front * (deltaTime * speed.z) * (1.0f - slow_down_effect); // like multiplying the forward speed by slow_down_effect
+                position += front * (deltaTime * speed.z) * (1.0f - slow_down_effect);      //like multiplying the forward speed by slow_down_effect
             }
 
+            //! Endgame Logic 
              if(lives == 0){
                     state-> getApp()->changeState("endgame-state");
-                    std::ifstream ifs("source/states/endgame.jsonc");
+                    std::ifstream ifs("source/states/endgame.jsonc");           // Read the score json (has last score and high score)
                     auto json = nlohmann::json::parse(ifs);
                     ifs.close();
                     int highScore = json.value("highScore", 0);
@@ -213,7 +211,7 @@ namespace our
                     if (score > highScore)  highScore = score;  // Compare json highscore with current score
 
                     std::ofstream ofs("source/states/endgame.jsonc");
-                    nlohmann::json j = {{"highScore", highScore}, {"score", score}};
+                    nlohmann::json j = {{"highScore", highScore}, {"score", score}};    // Write the new highscore and score to JSON
                     ofs << j;
                     ofs.close();
                 }
@@ -230,31 +228,23 @@ namespace our
         }
 
         void imgui()
-        { //= Will be called every frame in application.cpp to provide a slider for camera position and rotation (use camera component to get its own entity = camera)
+        { //= [OLD]: Will be called every frame in application.cpp to provide a slider for camera position and rotation (use camera component to get its own entity = camera)
+          //= A transparent ImGui window with no artifacts for score on top right.
             ImGuiWindowFlags window_flags = 0;
             window_flags |= ImGuiWindowFlags_NoBackground;
             window_flags |= ImGuiWindowFlags_NoTitleBar;
             window_flags |= ImGuiWindowFlags_NoResize;
             window_flags |= ImGuiWindowFlags_NoMove;
             window_flags |= ImGuiWindowFlags_NoScrollbar;
-
-            // etc.
             bool *open_ptr = (bool *)true;
-            if (playerCamera && ImGui::Begin("Ninja", open_ptr, window_flags))
-            { // playerCamera is initially null (else get a segmentationf fault)
-                // ImGui::DragFloat3("Camera position", &playerCamera->getOwner()->localTransform.position.x, -2.0f, 2.0f);
-                // ImGui::DragFloat3("Camera rotation", &playerCamera->getOwner()->localTransform.rotation.x, -20.0f, 20.0f);
-                // ImGui::DragFloat3("Player position", &controller->getOwner()->localTransform.position.x, -2.0f, 2.0f);
-                // ImGui::DragFloat3("Player scale", &controller->getOwner()->localTransform.scale.x, -2.0f, 2.0f);
-                //  Set imgui window position to top right
-                ImGui::SetWindowPos(ImVec2(app->getWindowSize().x - 200.0f, 0.0f)); // Will be back.
-                std::string player_score = "score: " + std::to_string((int)this->score);
-                std::string hearts = "Lives: " + std::to_string(this->lives);
+            if (playerCamera && ImGui::Begin("Ninja", open_ptr, window_flags))          // playerCame is redundant here (was needed in old slider)
+            { 
+                ImGui::SetWindowPos(ImVec2(app->getWindowSize().x - 200.0f, 0.0f));                 // Set position to top right
+                std::string player_score = "score: " + std::to_string((int)this->score);            // Set score
+                std::string hearts = "Lives: " + std::to_string(this->lives);                       // Set lives
                 ImGui::SetWindowFontScale(2.5f);
                 ImGui::TextUnformatted(player_score.c_str());
                 ImGui::TextUnformatted(hearts.c_str());
-                // remove scroll bar
-
                 ImGui::End();
             }
         }

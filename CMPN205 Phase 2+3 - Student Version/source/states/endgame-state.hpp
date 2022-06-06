@@ -100,7 +100,7 @@ class EndgameState: public our::State {
 
         if (ImGui::Button("Play Again"))
         {
-            getApp()->registerState<Playstate>("main");
+            getApp()->registerState<Playstate>("main");                 //! Need this here. 
             getApp()->changeState("main");
         }
 
