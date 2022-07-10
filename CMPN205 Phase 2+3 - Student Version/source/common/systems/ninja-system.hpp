@@ -18,7 +18,6 @@
 #include "./collision-system.hpp"
 
 
-
 namespace our
 { //= similar to free-camera-controller.
     //= The ninja-system is responsible for moving every entity which contains a NinjaControllerComponent.
@@ -54,7 +53,9 @@ namespace our
         int lives = 3;
         float exhaustion_time = 3.0f;      //= For how many seconds should the ship be exhausted after a collision          
         float slow_down_effect = 1.0f;    //= By how much should it be slowed down during exhaustion time (1.0 means no slowdown)
-
+        bool hurt = false;                  //= if collided with meteor then it becomes true until exhaustion time is over.
+        bool monkey_hit = false;            //= if collided with monkey then it becomes true until exhaustion time is over.
+        float monkey_buffer = 0.0f;        //= delay before we can feel rocks again again descending.
         our::CollisionSystem collisionSystem;
 
     public:
@@ -120,7 +121,7 @@ namespace our
             }
 
             //! Ninja Forward Direction.
-            if (app->getKeyboard().isPressed(GLFW_KEY_W))
+            if (app->getKeyboard().isPressed(GLFW_KEY_W) && !hurt && !monkey_hit)
             {
                 this->extra_score += 1;
                 position -= front * (deltaTime * speed.z);
@@ -133,7 +134,7 @@ namespace our
             }
             else                                                                        // Reset Camera effects
             {
-                if (app->getKeyboard().justReleased(GLFW_KEY_W))
+                if (app->getKeyboard().justReleased(GLFW_KEY_W) && !hurt && !monkey_hit)
                 {
                     index = def;
                     postprocessControl->setPostProcessing(index);
@@ -166,11 +167,16 @@ namespace our
                 entity->localTransform.rotation.z -= 0.01;
             
             }
+
+            if (app->getKeyboard().isPressed(GLFW_KEY_S))
+            {
+                        
+            }
             // note that the previous four directions are reversed because by default the camera is rotated to look from behind the ninja.
             
             //! Collision Logic
             Entity *collidedWith = collisionSystem.detectCollision(world);
-            if (collidedWith && collidedWith->name != "bonus")                  //= collision with asteroid
+            if (collidedWith && collidedWith->name != "bonus" && !monkey_hit && (float)glfwGetTime() - start_time > 0.7  )                  //= collision with asteroid
             {
                 collidedWith->visible = false;                                  // Asteroids collided with should cease to exist
                 collision_time = (float)glfwGetTime();                          // Exhaustion time counts from now
@@ -178,15 +184,16 @@ namespace our
                 postprocessControl->setPostProcessing(chromatic_aberration);    // The ship gets damaged
                 lives--;                                                        // los
                 slow_down_effect = 0.09f;                                       // Set the slow down effect
+                hurt = true;                                                    // Set the hurt state
 
             }
             else if (collidedWith && collidedWith->name == "bonus")             //= collision with bonus
             {
                 collidedWith->visible = false;
+                monkey_hit = true;
                 extra_score += (collidedWith->getComponent<CollisionComponent>()->bonus);   //= An increase in the player's score (hmm.)
                 collision_time = (float)glfwGetTime();
                 postprocessControl->setPostProcessing(convolution);
-
             }
 
             //! Exhaustion time logic
@@ -194,10 +201,19 @@ namespace our
             {
                 postprocessControl->setPostProcessing(index);                               //= Once exhaustion is over go back to the previous postprocessing
                 slow_down_effect = 1.0f;
+                hurt = false;
+                monkey_hit = false;
+                
             }
             else
             {
-                position += front * (deltaTime * speed.z) * (1.0f - slow_down_effect);      //like multiplying the forward speed by slow_down_effect
+                if (hurt)
+                    position += front * (deltaTime * speed.z) * (1.0f - slow_down_effect);      //like multiplying the forward speed by slow_down_effect
+                if (monkey_hit && (float)glfwGetTime() - collision_time < exhaustion_time*0.8)
+                    {position += up * (deltaTime * 85.0f * speed.y * 0.3f);    
+                    speed *= controller->speedupFactor;
+                    position -= front * (deltaTime * speed.z);
+                    }
             }
 
             //! Endgame Logic 

@@ -262,7 +262,7 @@ namespace our
             command.mesh->draw();
         }
 
-        //! ADDED FOR LIGHT
+        //! ADDED FOR LIGHT:
         //--------------------
         int light_count = world->light_count;
         Light *lights = world->lights;
