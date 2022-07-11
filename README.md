@@ -1,5 +1,5 @@
 <img width="1082" alt="image" src="https://user-images.githubusercontent.com/49572294/178162948-21d352cc-b643-4c37-aebf-4caf697b318d.png">
-This school project was implemented in fulfilment of the classword requirements of the computer graphics course taught in Cairo University under Eng. Yahia Zakaria and Dr. Ahmed Kaseb.
+This school project was implemented in fulfilment of the classword requirements of the computer graphics course taught in Cairo University by Eng. Yahia Zakaria and Dr. Ahmed Kaseb.
 
 ## Technology Stack 📚
 ![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white) ![OpenGL](https://img.shields.io/badge/OpenGL-%23FFFFFF.svg?style=for-the-badge&logo=opengl) ![image](https://user-images.githubusercontent.com/49572294/178163500-d9e59ebc-7653-4e61-be80-fa49c2c9e505.png)
@@ -24,7 +24,7 @@ You wake up in a spaceship lost in a universe and your goal is escape the dense 
 
 ❇️ Gravity due to Earth v2.0 naturally moves the spaceship forward but the spaceship can be accelrated by pressing W (spaceship accelerator) to make the score increase much faster (while running the risk of hitting an asteroid).
 
-❇️ Hitting an asteroid causes a slow-down and takes away one life from the spaceship. The spaceship can naturally sustain up to 3 hits.
+❇️ Hitting an asteroid causes a slowdown and takes away one life from the spaceship. The spaceship can naturally sustain up to 3 hits.
 
 ❇️ Hitting a monkey grants a score boost and energy from the 79th element that allows the spaceship to fly over the asteroid belt for a limited period of time.
 
