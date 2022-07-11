@@ -1,5 +1,5 @@
 <img width="1082" alt="image" src="https://user-images.githubusercontent.com/49572294/178162948-21d352cc-b643-4c37-aebf-4caf697b318d.png">
-This school project was implemented in fulfilment of the classword requirements of the computer graphics course taught in Cairo University by Eng. Yahia Zakaria and Dr. Ahmed Kaseb.
+This game is a school project that was implemented in fulfilment of the classword requirements of the computer graphics course taught in Cairo University by Eng. Yahia Zakaria and Dr. Ahmed Kaseb.
 
 ## Technology Stack 📚
 ![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white) ![OpenGL](https://img.shields.io/badge/OpenGL-%23FFFFFF.svg?style=for-the-badge&logo=opengl) ![image](https://user-images.githubusercontent.com/49572294/178163500-d9e59ebc-7653-4e61-be80-fa49c2c9e505.png)
@@ -17,7 +17,7 @@ then follow up with
 ```
 
 ## Lore 📖
-You wake up in a spaceship lost in a universe and your goal is escape the dense asteroid belt (survive with the highest score possible) to continue the mission of finding Earth v2.0. 
+You wake up in a spaceship lost in the universe and your goal is escape the dense asteroid belt (survive with the highest score possible) to continue the mission of finding Earth v2.0. 
 
 ## Controls 🎮 
 ❇️ Press A or D to make the ship navigate to the left or right respectively.
