@@ -24,6 +24,8 @@ You wake up in a spaceship lost in a universe and your goal is escape the dense 
 
 ❇️ Gravity due to Earth v2.0 naturally moves the spaceship forward but the spaceship can be accelrated by pressing W (spaceship accelerator) to make the score increase much faster (while running the risk of hitting an asteroid).
 
+❇️ Hitting an asteroid causes a slow-down and takes away one life from the spaceship. The spaceship can naturally sustain up to 3 hits.
+
 ❇️ Hitting a monkey grants a score boost and energy from the 79th element that allows the spaceship to fly over the asteroid belt for a limited period of time.
 
 ❇️ Play with your friends and see who can get the highest score!
