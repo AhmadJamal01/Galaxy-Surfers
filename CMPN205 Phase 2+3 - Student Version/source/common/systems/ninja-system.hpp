@@ -176,7 +176,7 @@ namespace our
             
             //! Collision Logic
             Entity *collidedWith = collisionSystem.detectCollision(world);
-            if (collidedWith && collidedWith->name != "bonus" && !monkey_hit && (float)glfwGetTime() - start_time > 0.7  )                  //= collision with asteroid
+            if (collidedWith && collidedWith->name != "bonus" && !monkey_hit && (float)glfwGetTime() - start_time > 1.0f  )                  //= collision with asteroid
             {
                 collidedWith->visible = false;                                  // Asteroids collided with should cease to exist
                 collision_time = (float)glfwGetTime();                          // Exhaustion time counts from now
@@ -213,6 +213,8 @@ namespace our
                     {position += up * (deltaTime * 85.0f * speed.y * 0.3f);    
                     speed *= controller->speedupFactor;
                     position -= front * (deltaTime * speed.z);
+                    this->extra_score += 1;
+
                     }
             }
 
