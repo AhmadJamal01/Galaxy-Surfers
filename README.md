@@ -35,7 +35,7 @@ You wake up in a spaceship lost in the universe and your goal is escape the dens
 https://user-images.githubusercontent.com/49572294/172071495-b9db5619-5866-4449-95db-a9273e65b588.mp4
 
 ## Download
-Click <a href="google.com"> here </a> to download the game.
+Click <a href="google.com"> here </a> to download the game. [pending]
 ## Collaborators
 <!-- readme: collaborators -start -->
 <table>
