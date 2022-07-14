@@ -35,7 +35,7 @@ You wake up in a spaceship lost in the universe and your goal is escape the dens
 https://user-images.githubusercontent.com/65499354/179037122-ead035a7-bcab-4ff9-a5a3-c5c23543f2e2.mp4
 
 ## Download
-Click <a href="https://mega.nz/file/7OgABLSI#2_8Wnr3OMyXb-59oiJxyqYeTY9B2_gBFj2O1XRJRf8o"> here </a> to download the game.
+Click <a href="https://mega.nz/file/7OgABLSI#2_8Wnr3OMyXb-59oiJxyqYeTY9B2_gBFj2O1XRJRf8o"> here </a> to download the game (unzip then run the .exe).
 ## Collaborators
 <!-- readme: collaborators -start -->
 <table>
